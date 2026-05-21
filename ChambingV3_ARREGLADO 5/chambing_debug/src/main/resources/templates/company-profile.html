@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styled.css}">
+    <title>Empresa - Mi Perfil</title>
+</head>
+
+<body>
+    <div class="d-flex" id="content-wrapper">
+        <div id="sidebar-container" class="bg-primary">
+            <div class="logo">
+                <a href="/company-dashboard" class="text-light font-weight-bold mb-0 h4">CHAMBING</a>
+            </div>
+            <div class="menu">
+                <a href="/edit-propuesta" class="d-block text-light p-3 border-0"><i class="icon ion-md-apps lead mr-2"></i>Editar Propuestas</a>
+                <a href="/company-proposals" class="d-block text-light p-3 border-0"><i class="icon ion-md-add-circle lead mr-2"></i>Nueva Propuesta</a>
+                <a href="/company-profile" class="d-block text-light p-3 border-0 active"><i class="icon ion-md-business lead mr-2"></i>Mi Perfil</a>
+            </div>
+        </div>
+
+        <div class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <div class="container">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown"
+                                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="images/user-1.png" class="rounded-circle" alt="avatar" width="35" height="35">
+                                    Configuracion
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="/company-profile">Mi perfil</a>
+                                    <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div id="content" class="bg-grey w-100">
+                <section class="bg-light py-3">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <h1 class="font-weight-bold mb-0">Mi Perfil</h1>
+                                <p class="lead text-muted">Edita los datos corporativos de tu empresa.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 my-3">
+                                <div class="card rounded-0">
+                                    <div class="card-header bg-light">
+                                        <h6 class="font-weight-bold mb-0">Modificación de Datos Corporativos</h6>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <div id="loadingSpinner" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="sr-only">Cargando...</span>
+                                            </div>
+                                            <p class="mt-2 text-muted">Cargando datos...</p>
+                                        </div>
+
+                                        <div id="alertFeedback" class="alert d-none" role="alert"></div>
+
+                                        <form id="formEmpresa" class="d-none">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-8">
+                                                    <label for="inputNombreEmpresa">Nombre de la Empresa</label>
+                                                    <input type="text" class="form-control" id="inputNombreEmpresa"
+                                                        placeholder="Razón Social o Nombre Comercial" required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="inputNIT">NIT</label>
+                                                    <input type="number" class="form-control" id="inputNIT"
+                                                        placeholder="NIT sin dígito de verificación">
+                                                </div>
+                                            </div>
+
+                                            <hr>
+
+                                            <div class="form-group">
+                                                <label for="inputCalle">Dirección Principal</label>
+                                                <input type="text" class="form-control" id="inputCalle"
+                                                    placeholder="Ej: Calle 90 # 19-70">
+                                                <small class="form-text text-muted">Dirección legal o principal de la empresa.</small>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="selectDepartamento">Departamento</label>
+                                                    <select id="selectDepartamento" class="form-control">
+                                                        <option value="">Elegir Departamento...</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="selectCiudad">Ciudad</label>
+                                                    <select id="selectCiudad" class="form-control" disabled>
+                                                        <option value="">Selecciona un Departamento primero...</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <hr>
+
+                                            <div class="form-group">
+                                                <label for="inputEmail">Email de Contacto</label>
+                                                <input type="email" class="form-control" id="inputEmail"
+                                                    placeholder="contacto@nombreempresa.com" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="inputPassword">Nueva Contraseña</label>
+                                                <input type="password" class="form-control" id="inputPassword"
+                                                    placeholder="Dejar vacío para no cambiar">
+                                                <small class="form-text text-muted">Solo ingresa una contraseña si deseas cambiarla.</small>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary" id="btnGuardar">
+                                                Guardar Cambios
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+        const colombiaData = {
+            "Amazonas":               ["Leticia", "Puerto Nariño"],
+            "Antioquia":              ["Medellín", "Bello", "Itagüí", "Envigado", "Apartadó", "Turbo", "Rionegro", "Caucasia", "Sabaneta", "La Estrella"],
+            "Arauca":                 ["Arauca", "Saravena", "Tame", "Fortul", "Puerto Rondón"],
+            "Atlántico":              ["Barranquilla", "Soledad", "Malambo", "Sabanalarga", "Galapa", "Baranoa", "Puerto Colombia"],
+            "Bolívar":                ["Cartagena", "Magangué", "El Carmen de Bolívar", "Mompox", "Turbaco", "Arjona", "San Juan Nepomuceno"],
+            "Boyacá":                 ["Tunja", "Duitama", "Sogamoso", "Chiquinquirá", "Paipa", "Puerto Boyacá"],
+            "Caldas":                 ["Manizales", "Villamaría", "La Dorada", "Chinchiná", "Riosucio"],
+            "Caquetá":                ["Florencia", "San Vicente del Caguán", "Puerto Rico", "El Paujil"],
+            "Casanare":               ["Yopal", "Aguazul", "Villanueva", "Paz de Ariporo", "Tauramena"],
+            "Cauca":                  ["Popayán", "Santander de Quilichao", "Puerto Tejada", "Patía"],
+            "Cesar":                  ["Valledupar", "Aguachica", "Bosconia", "La Paz", "Agustín Codazzi"],
+            "Chocó":                  ["Quibdó", "Istmina", "Tadó", "Condoto"],
+            "Córdoba":                ["Montería", "Lorica", "Cereté", "Sahagún", "Montelíbano", "Tierralta"],
+            "Cundinamarca":           ["Bogotá D.C.", "Soacha", "Fusagasugá", "Facatativá", "Zipaquirá", "Chía", "Mosquera", "Madrid", "Funza", "Girardot"],
+            "Guainía":                ["Inírida"],
+            "Guaviare":               ["San José del Guaviare", "El Retorno", "Calamar"],
+            "Huila":                  ["Neiva", "Pitalito", "Garzón", "La Plata", "Campoalegre"],
+            "La Guajira":             ["Riohacha", "Maicao", "Uribia", "Manaure", "San Juan del Cesar"],
+            "Magdalena":              ["Santa Marta", "Ciénaga", "Fundación", "El Banco", "Plato"],
+            "Meta":                   ["Villavicencio", "Acacías", "Granada", "San Martín", "Puerto López"],
+            "Nariño":                 ["Pasto", "Tumaco", "Ipiales", "La Unión", "Túquerres"],
+            "Norte de Santander":     ["Cúcuta", "Ocaña", "Pamplona", "Villa del Rosario", "Los Patios"],
+            "Putumayo":               ["Mocoa", "Puerto Asís", "Orito", "Valle del Guamuez"],
+            "Quindío":                ["Armenia", "Calarcá", "Montenegro", "Circasia", "La Tebaida"],
+            "Risaralda":              ["Pereira", "Dosquebradas", "Santa Rosa de Cabal", "La Virginia"],
+            "San Andrés":             ["San Andrés", "Providencia"],
+            "Santander":              ["Bucaramanga", "Floridablanca", "Girón", "Piedecuesta", "Barrancabermeja", "Socorro"],
+            "Sucre":                  ["Sincelejo", "Corozal", "San Marcos", "Tolú", "Sampués"],
+            "Tolima":                 ["Ibagué", "Espinal", "Melgar", "Honda"],
+            "Valle del Cauca":        ["Cali", "Buenaventura", "Palmira", "Tuluá", "Buga", "Cartago", "Yumbo"],
+            "Vaupés":                 ["Mitú"],
+            "Vichada":                ["Puerto Carreño", "La Primavera"]
+        };
+
+        const selectDep = document.getElementById('selectDepartamento');
+        const selectCiu = document.getElementById('selectCiudad');
+        let empresaId = null;
+
+        // ─── POBLAR DEPARTAMENTOS ──────────────────────────────────────────────────
+        Object.keys(colombiaData).sort().forEach(dep => {
+            const opt = document.createElement('option');
+            opt.value = dep;
+            opt.textContent = dep;
+            selectDep.appendChild(opt);
+        });
+
+        // ─── POBLAR CIUDADES ───────────────────────────────────────────────────────
+        function cargarCiudades(depSeleccionado, ciudadActual = null) {
+            selectCiu.innerHTML = '';
+
+            if (!depSeleccionado) {
+                selectCiu.innerHTML = '<option value="">Selecciona un Departamento primero...</option>';
+                selectCiu.disabled = true;
+                return;
+            }
+
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Elegir Ciudad...';
+            selectCiu.appendChild(placeholder);
+
+            (colombiaData[depSeleccionado] || []).forEach(ciudad => {
+                const opt = document.createElement('option');
+                opt.value = ciudad;
+                opt.textContent = ciudad;
+                if (ciudadActual && ciudad === ciudadActual) opt.selected = true;
+                selectCiu.appendChild(opt);
+            });
+
+            selectCiu.disabled = false;
+        }
+
+        selectDep.addEventListener('change', function () {
+            cargarCiudades(this.value);
+        });
+
+        // ─── CARGAR DATOS ACTUALES ─────────────────────────────────────────────────
+        async function cargarPerfil() {
+            try {
+                const res = await fetch('/empresa/me');
+
+                if (res.status === 401) { window.location.href = '/login'; return; }
+                if (!res.ok) throw new Error('Error al cargar perfil');
+
+                const empresa = await res.json();
+                empresaId = empresa.idEmpresa;
+
+                // ✅ direccion es un objeto
+                const dir = empresa.direccion || {};
+
+                document.getElementById('inputNombreEmpresa').value = empresa.nombreEmpresa || '';
+                document.getElementById('inputNIT').value           = empresa.nit           || '';
+                document.getElementById('inputEmail').value         = empresa.correo        || '';
+                document.getElementById('inputCalle').value         = dir.calle             || '';
+
+                // Pre-seleccionar departamento y ciudad
+                if (dir.departamento) {
+                    selectDep.value = dir.departamento;
+                    cargarCiudades(dir.departamento, dir.ciudad);
+                }
+
+                document.getElementById('loadingSpinner').classList.add('d-none');
+                document.getElementById('formEmpresa').classList.remove('d-none');
+
+            } catch (err) {
+                document.getElementById('loadingSpinner').classList.add('d-none');
+                mostrarAlerta('danger', 'Error al cargar los datos del perfil. Recarga la página.');
+                console.error(err);
+            }
+        }
+
+        // ─── GUARDAR CAMBIOS → PUT /empresa/{id} ──────────────────────────────────
+        document.getElementById('formEmpresa').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (!empresaId) {
+                mostrarAlerta('danger', 'No se encontró el ID de la empresa.');
+                return;
+            }
+
+            const departamento = selectDep.value;
+            const ciudad       = selectCiu.value;
+
+            if (!departamento || !ciudad) {
+                mostrarAlerta('danger', 'Por favor selecciona un departamento y una ciudad.');
+                return;
+            }
+
+            // ✅ nit como Integer, direccion como objeto anidado
+            const payload = {
+                nombreEmpresa: document.getElementById('inputNombreEmpresa').value.trim(),
+                nit:           parseInt(document.getElementById('inputNIT').value) || null,
+                correo:        document.getElementById('inputEmail').value.trim(),
+                direccion: {
+                    calle:        document.getElementById('inputCalle').value.trim(),
+                    departamento: departamento,  // ✅ "Bolívar", nunca "bolivar"
+                    ciudad:       ciudad          // ✅ "Cartagena", nunca "cartagena"
+                }
+            };
+
+            // Contraseña solo si se escribió algo
+            const pwd = document.getElementById('inputPassword').value;
+            if (pwd && pwd.trim() !== '') payload.contrasena = pwd;
+
+            const btn = document.getElementById('btnGuardar');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                const res = await fetch(`/empresa/${empresaId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    document.getElementById('inputPassword').value = '';
+                    mostrarAlerta('success', '¡Perfil actualizado correctamente!');
+                } else {
+                    const contentType = res.headers.get('content-type') || '';
+                    let msg = `Error ${res.status}`;
+                    if (contentType.includes('application/json')) {
+                        const errJson = await res.json();
+                        msg = errJson.message || errJson.error || JSON.stringify(errJson);
+                    } else {
+                        msg = await res.text();
+                    }
+                    mostrarAlerta('danger', msg);
+                }
+            } catch (err) {
+                mostrarAlerta('danger', 'Error de conexión. Intenta nuevamente.');
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Cambios';
+            }
+        });
+
+        // ─── HELPER ALERTA ────────────────────────────────────────────────────────
+        function mostrarAlerta(tipo, mensaje) {
+            const alerta = document.getElementById('alertFeedback');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.textContent = mensaje;
+            alerta.classList.remove('d-none');
+            setTimeout(() => alerta.classList.add('d-none'), 5000);
+        }
+
+        cargarPerfil();
+    </script>
+</body>
+</html>

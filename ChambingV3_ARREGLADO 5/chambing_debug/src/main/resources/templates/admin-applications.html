@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <title>Propuestas - Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+  <header class="header">
+    <div class="brand"><div class="logo">DB</div><div><div style="font-weight:700">Propuestas</div><div style="font-size:13px;color:var(--muted)">Ofertas publicadas</div></div></div>
+    <nav class="nav">
+      <a href="index.html">Resumen</a>
+      <a href="usuarios.html">Usuarios</a>
+      <a href="empresas.html">Empresas</a>
+      <a href="propuestas.html" class="active">Propuestas</a>
+      <a href="postulaciones.html">Postulaciones</a>
+      <a href="ubicaciones.html">Ubicaciones</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Filtrar</h3>
+      <select id="fCat" style="padding:8px;border-radius:8px">
+        <option value="">Todas las categorías</option>
+        <option>TI</option>
+        <option>Diseño</option>
+        <option>Administración</option>
+      </select>
+      <button class="btn" style="margin-top:8px" onclick="applyFilter()">Aplicar</button>
+    </aside>
+
+    <main class="panel">
+      <div class="card">
+        <h3 style="margin:0 0 12px 0">Propuestas</h3>
+        <table class="table" id="propTable">
+          <thead><tr><th>ID</th><th>Título</th><th>Empresa</th><th>Categoría</th><th>Salario</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const propuestas = [
+      {id:1,titulo:"Desarrollador Java", empresa:"Acme S.A.", categoria:"TI", salario:"$3000"},
+      {id:2,titulo:"Diseñador UX", empresa:"GlobalTech", categoria:"Diseño", salario:"$2200"},
+      {id:3,titulo:"Auxiliar administrativo", empresa:"Acme S.A.", categoria:"Administración", salario:"$1200"}
+    ];
+
+    function render(list){
+      const tbody = document.querySelector('#propTable tbody');
+      tbody.innerHTML = "";
+      list.forEach(p=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML = `<td>${p.id}</td><td>${p.titulo}</td><td>${p.empresa}</td><td>${p.categoria}</td><td>${p.salario}</td>`;
+        tbody.appendChild(tr);
+      })
+    }
+
+    function applyFilter(){
+      const cat = document.getElementById('fCat').value;
+      const res = cat ? propuestas.filter(p=>p.categoria===cat) : propuestas;
+      render(res);
+    }
+
+    render(propuestas);
+  </script>
+  
+
+</body>
+</html>

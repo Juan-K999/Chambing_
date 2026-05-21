@@ -1,0 +1,14 @@
+﻿# Archivos sensibles
+credenciales.txt
+application.properties
+
+# Carpeta de compilación
+target/
+
+# VS Code
+.vscode/
+
+# Otros comunes
+*.log
+.DS_Store
+Thumbs.db

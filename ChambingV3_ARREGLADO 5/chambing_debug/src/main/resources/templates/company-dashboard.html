@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Dashboard Empresa - CHAMBING</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styled.css}">
+</head>
+<body>
+<div class="d-flex" id="content-wrapper">
+
+  <div id="sidebar-container" class="bg-primary">
+    <div class="logo">
+      <a href="/company-dashboard" class="text-light font-weight-bold mb-0 h4">CHAMBING</a>
+    </div>
+    <div class="menu">
+      <a href="/company-dashboard" class="d-block text-light p-3 border-0 active">
+        <i class="icon ion-md-apps lead mr-2"></i> Mis Propuestas
+      </a>
+      <a href="/company-proposals" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-add-circle lead mr-2"></i> Publicar Propuesta
+      </a>
+      <a href="/edit-propuesta" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-create lead mr-2"></i> Editar Propuestas
+      </a>
+      <a href="/company-profile" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-person lead mr-2"></i> Perfil
+      </a>
+    </div>
+  </div>
+
+  <div class="w-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <div class="container">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+              <img th:src="@{/images/user-1.png}" class="rounded-circle" width="35" height="35">
+              <span id="nombreNav">Configuración</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="/company-profile">Mi perfil</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="/logout">Cerrar sesión</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="content" class="bg-grey w-100">
+      <section class="bg-light py-3">
+        <div class="container">
+          <h1 class="font-weight-bold mb-0">Bienvenido, <span id="nombreEmpresa">...</span></h1>
+          <p class="lead text-muted">Revisa y gestiona las propuestas de tu empresa</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 my-3">
+              <div class="card rounded-0">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h6 class="font-weight-bold mb-0">Mis Propuestas</h6>
+                  <a href="/company-proposals" class="btn btn-primary btn-sm">+ Nueva Propuesta</a>
+                </div>
+                <div class="card-body" id="propuestas-body">
+                  <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status"></div>
+                  </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center flex-wrap" style="gap:8px">
+                  <span id="pag-info-text" style="font-size:.82rem;color:#6b7280;"></span>
+                  <div id="pag-controls" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 my-3">
+              <div class="card rounded-0">
+                <div class="card-header bg-light">
+                  <h6 class="font-weight-bold mb-0">Propuestas Recientes</h6>
+                </div>
+                <div class="card-body pt-2" id="propuestas-recientes">
+                  <p class="text-muted small">Cargando...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script>
+let empresaActual = null;
+
+function escHtml(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
+async function init() {
+  try {
+    const res = await fetch('/empresa/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    empresaActual = await res.json();
+
+    document.getElementById('nombreEmpresa').textContent = empresaActual.nombreEmpresa || '';
+    document.getElementById('nombreNav').textContent     = empresaActual.nombreEmpresa || 'Empresa';
+
+    await cargarPropuestas();
+  } catch(e) { window.location.href = '/login'; }
+}
+
+
+const PAGE_SIZE = 5;
+let todasPropuestas = [];
+let paginaActual = 1;
+async function cargarPropuestas() {
+  const container = document.getElementById('propuestas-body');
+  try {
+    const res  = await fetch(`/empresa/${empresaActual.idEmpresa}/propuestas`);
+    todasPropuestas = await res.json();
+    paginaActual = 1;
+    renderPropuestas();
+    renderRecientes();
+  } catch(e) {
+    container.innerHTML = "<p class='text-danger'>No se pudieron cargar las propuestas.</p>";
+  }
+}
+
+function renderPropuestas() {
+  const container  = document.getElementById('propuestas-body');
+  const total      = todasPropuestas.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const inicio     = (paginaActual - 1) * PAGE_SIZE;
+  const fin        = Math.min(inicio + PAGE_SIZE, total);
+  const pagina     = todasPropuestas.slice(inicio, fin);
+
+  document.getElementById('pag-info-text').textContent =
+    total === 0 ? '' : `Mostrando ${inicio + 1}–${fin} de ${total}`;
+
+  if (pagina.length === 0) {
+    container.innerHTML = "<p class='text-muted'>No tienes propuestas aún. <a href='/company-proposals'>Publica una</a>.</p>";
+    renderPaginacion(0);
+    return;
+  }
+
+  container.innerHTML = pagina.map(p => `
+    <div class="border-bottom pb-3 mb-3">
+      <div class="d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+          <h5 class="font-weight-bold text-primary mb-1">${escHtml(p.titulo)}</h5>
+          <p class="text-muted small mb-1">
+            <i class="icon ion-md-pricetag"></i> ${escHtml(p.categoria || 'General')}
+            &nbsp;|&nbsp;
+            <span class="badge badge-${p.estado==='Activa'?'success':'secondary'}">${escHtml(p.estado)}</span>
+          </p>
+        </div>
+        <span class="font-weight-bold text-success">$${Number(p.salario||0).toLocaleString('es-CO')}</span>
+      </div>
+      <p class="small mb-2">${escHtml(p.descripcion || '')}</p>
+      <div class="d-flex gap-2">
+        <a href="/company-proposal-edit?id=${p.idPropuesta}" class="btn btn-outline-primary btn-sm">Editar</a>
+        <a href="/proposals-answer?idPropuesta=${p.idPropuesta}" class="btn btn-outline-info btn-sm">Ver postulantes</a>
+        <button onclick="eliminarPropuesta('${p.idPropuesta}', this)" class="btn btn-outline-danger btn-sm">Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+
+  renderPaginacion(totalPages);
+}
+
+function renderPaginacion(totalPages) {
+  const ctrl = document.getElementById('pag-controls');
+  if (totalPages <= 1) { ctrl.innerHTML = ''; return; }
+
+  let html = '';
+  html += `<button class="btn btn-outline-secondary btn-sm"
+    ${paginaActual === 1 ? 'disabled' : ''}
+    onclick="irPagina(${paginaActual - 1})">‹ Anterior</button>`;
+
+  const maxVisible = 5;
+  let startPage = Math.max(1, paginaActual - Math.floor(maxVisible / 2));
+  let endPage   = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+  if (startPage > 1) html += `<button class="btn btn-outline-secondary btn-sm" onclick="irPagina(1)">1</button>`;
+  if (startPage > 2) html += `<span class="text-muted small px-1">…</span>`;
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `<button class="btn btn-sm ${i === paginaActual ? 'btn-primary' : 'btn-outline-secondary'}"
+      onclick="irPagina(${i})">${i}</button>`;
+  }
+
+  if (endPage < totalPages - 1) html += `<span class="text-muted small px-1">…</span>`;
+  if (endPage < totalPages) html += `<button class="btn btn-outline-secondary btn-sm" onclick="irPagina(${totalPages})">${totalPages}</button>`;
+
+  html += `<button class="btn btn-outline-secondary btn-sm"
+    ${paginaActual === totalPages ? 'disabled' : ''}
+    onclick="irPagina(${paginaActual + 1})">Siguiente ›</button>`;
+
+  ctrl.innerHTML = html;
+}
+
+function irPagina(n) {
+  paginaActual = n;
+  renderPropuestas();
+  document.querySelector('#propuestas-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderRecientes() {
+  const recientes = document.getElementById('propuestas-recientes');
+  if (todasPropuestas.length === 0) {
+    recientes.innerHTML = "<p class='text-muted small'>Sin propuestas.</p>";
+    return;
+  }
+  recientes.innerHTML = todasPropuestas.slice(0, 5).map(p => `
+    <div class="d-flex border-bottom py-2">
+      <div class="mr-3"><h4 class="mb-0"><i class="icon ion-md-pricetag text-primary"></i></h4></div>
+      <div>
+        <small class="d-block font-weight-bold">${escHtml(p.titulo)}</small>
+        <small class="text-muted">${escHtml(p.estado)}</small>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function eliminarPropuesta(idPropuesta, btn) {
+  if (!confirm('¿Eliminar esta propuesta?')) return;
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/empresa/${empresaActual.idEmpresa}/propuestas/${idPropuesta}`, { method: 'DELETE' });
+    if (res.ok) {
+      await cargarPropuestas();
+    } else {
+      alert('Error: ' + await res.text());
+      btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Error de conexión.');
+    btn.disabled = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

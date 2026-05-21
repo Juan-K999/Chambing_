@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styled.css">
+    <title>Publicar Propuesta - CHAMBING</title>
+</head>
+<body>
+<div class="d-flex" id="content-wrapper">
+
+    <div id="sidebar-container" class="bg-primary">
+        <div class="logo">
+            <a href="/company-dashboard" class="text-light font-weight-bold mb-0 h4">CHAMBING</a>
+        </div>
+        <div class="menu">
+            <a href="/edit-propuesta" class="d-block text-light p-3 border-0"><i class="icon ion-md-apps lead mr-2"></i>Editar Propuestas</a>
+            <a href="/company-proposals" class="d-block text-light p-3 border-0 active"><i class="icon ion-md-add-circle lead mr-2"></i>Nueva Propuesta</a>
+            <a href="/company-profile" class="d-block text-light p-3 border-0"><i class="icon ion-md-business lead mr-2"></i>Mi Perfil</a>
+        </div>
+    </div>
+
+    <div class="w-100">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                                <img src="images/user-1.png" class="rounded-circle" alt="avatar" width="35" height="35">
+                                <span id="nombreNav">Cargando...</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="/company-profile">Mi perfil</a>
+                                <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div id="content" class="bg-grey w-100">
+            <section class="bg-light py-3">
+                <div class="container">
+                    <h1 class="font-weight-bold mb-0">Publicar una Nueva Propuesta</h1>
+                    <p class="lead text-muted">Detalles de la oferta laboral para los candidatos.</p>
+                </div>
+            </section>
+
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 my-3">
+                            <div class="card rounded-0">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="font-weight-bold mb-0">Creación de Propuesta de Trabajo</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-propuesta">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-8">
+                                                <label>Título de la Propuesta</label>
+                                                <input type="text" class="form-control" id="inputTitulo" placeholder="Ej: Desarrollador Backend Senior" required>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label>Salario (Mensual)</label>
+                                                <input type="number" class="form-control" id="inputSalario" placeholder="Ej: 3500000" required>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group">
+                                            <label>Descripción del Puesto</label>
+                                            <textarea class="form-control" id="inputDescripcion" rows="4" placeholder="Detalle las responsabilidades diarias..." required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Requisitos Mínimos</label>
+                                            <textarea class="form-control" id="inputRequisitos" rows="3" placeholder="Ej: 3 años de experiencia en Java..." required></textarea>
+                                        </div>
+                                        <hr>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label>Categoría / Área</label>
+                                                <select id="selectCategoria" class="form-control" required>
+                                                    <option value="">Elegir Categoría...</option>
+                                                    <option value="Tecnología y Desarrollo">Tecnología y Desarrollo</option>
+                                                    <option value="Marketing Digital">Marketing Digital</option>
+                                                    <option value="Recursos Humanos">Recursos Humanos</option>
+                                                    <option value="Administración y Finanzas">Administración y Finanzas</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Estado de la Publicación</label>
+                                                <select id="selectEstado" class="form-control" required>
+                                                    <option value="">Elegir Estado...</option>
+                                                    <option value="Activa">Activa (Visible)</option>
+                                                    <option value="Borrador">Borrador (No Visible)</option>
+                                                    <option value="Cerrada">Cerrada</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button type="submit" id="btnPublicar" class="btn btn-success mt-3">
+                                            <i class="icon ion-md-send mr-2"></i>Publicar Propuesta
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script>
+const API_URL = "http://localhost:9999";
+let empresaActual = null;
+
+async function cargarEmpresa() {
+    try {
+        const res = await fetch('/empresa/me');
+        if (!res.ok) throw new Error('No autorizado');
+
+        empresaActual = await res.json();
+        console.log("✅ Empresa cargada correctamente:", empresaActual);
+
+        document.getElementById('nombreNav').textContent = empresaActual.nombreEmpresa || 'Empresa';
+        return true;
+    } catch (e) {
+        console.error(e);
+        alert("Error de sesión. Inicia sesión nuevamente.");
+        window.location.href = '/login';
+        return false;
+    }
+}
+
+document.getElementById('form-propuesta').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('btnPublicar');
+    const textoOriginal = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm mr-2"></span> Publicando...`;
+
+    if (!empresaActual) {
+        const ok = await cargarEmpresa();
+        if (!ok) {
+            btn.disabled = false;
+            btn.innerHTML = textoOriginal;
+            return;
+        }
+    }
+
+    if (!empresaActual.idEmpresa) {
+        alert("Error: No se encontró el ID de la empresa.");
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+        return;
+    }
+
+    const nuevaPropuesta = {
+        titulo:      document.getElementById('inputTitulo').value.trim(),
+        salario:     parseFloat(document.getElementById('inputSalario').value) || 0,
+        descripcion: document.getElementById('inputDescripcion').value.trim(),
+        requisitos:  document.getElementById('inputRequisitos').value.trim(),
+        categoria:   document.getElementById('selectCategoria').value,
+        estado:      document.getElementById('selectEstado').value
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/empresa/${empresaActual.idEmpresa}/propuestas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(nuevaPropuesta)
+        });
+
+        if (response.ok) {
+            alert("¡Propuesta publicada con éxito!");
+            window.location.href = "/company-dashboard";
+        } else {
+            const errorText = await response.text();
+            alert("Error al publicar: " + errorText);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error de conexión con el servidor.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', cargarEmpresa);
+</script>
+</body>
+</html>

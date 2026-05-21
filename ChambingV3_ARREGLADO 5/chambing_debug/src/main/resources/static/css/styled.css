@@ -1,0 +1,649 @@
+/* ============================================================================
+   STYLED.CSS — Chambing / Empleo Cartagena
+   Diseño compartido por user-*, company-*, companies-*, proposals-*,
+   edit-propuesta y only-proporsals. Mantiene la paleta del index:
+     #4b208c · #190734 · #5625a1 · #7b57b2 · #eae6f5 · #f3f0f6
+   Sólo CSS — ningún cambio en HTML.
+   ============================================================================ */
+
+:root {
+  --ch-primary:        #4b208c;
+  --ch-primary-dark:   #190734;
+  --ch-primary-deep:   #2e0e5f;
+  --ch-primary-hover:  #5625a1;
+  --ch-primary-soft:   #7b57b2;
+  --ch-primary-tint:   #eae6f5;
+  --ch-primary-bg:     #f3f0f6;
+  --ch-surface:        #f8f7fb;
+  --ch-card:           #ffffff;
+  --ch-border:         #e6e2ef;
+  --ch-text:           #1f1430;
+  --ch-text-muted:     #6b6485;
+  --ch-success:        #16a34a;
+  --ch-success-soft:   #dcfce7;
+  --ch-danger:         #dc2626;
+  --ch-danger-soft:    #fee2e2;
+  --ch-warning:        #d97706;
+  --ch-warning-soft:   #fef3c7;
+  --ch-shadow-sm:      0 2px 6px rgba(25, 7, 52, .06);
+  --ch-shadow-md:      0 6px 18px rgba(25, 7, 52, .10);
+  --ch-shadow-lg:      0 14px 36px rgba(25, 7, 52, .14);
+  --ch-radius:         12px;
+  --ch-radius-lg:      16px;
+  --ch-transition:     all .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+
+html, body {
+  font-family: "Muli", "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--ch-surface);
+  color: var(--ch-text);
+  scroll-behavior: smooth;
+}
+
+::selection { background: var(--ch-primary-tint); color: var(--ch-primary-dark); }
+
+@keyframes ch-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ch-slide-in-left {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+#content-wrapper > .w-100 { animation: ch-fade-in .35s ease-out; }
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+
+#sidebar-container {
+  min-width: 230px;
+  max-width: 230px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--ch-primary-dark) 0%, var(--ch-primary-deep) 60%, var(--ch-primary) 100%) !important;
+  box-shadow: 4px 0 18px rgba(25, 7, 52, .18);
+  position: relative;
+  z-index: 2;
+}
+
+#sidebar-container .logo {
+  padding: 1.25rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  text-align: center;
+}
+
+#sidebar-container .logo a {
+  letter-spacing: 1.2px;
+  font-weight: 800 !important;
+  background: linear-gradient(90deg, #fff, #d5c8ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+#sidebar-container .menu { padding-top: .5rem; }
+
+#sidebar-container .menu a {
+  position: relative;
+  font-weight: 500;
+  font-size: .92rem;
+  color: rgba(255, 255, 255, .82) !important;
+  border-left: 3px solid transparent;
+  transition: var(--ch-transition);
+  animation: ch-slide-in-left .3s ease-out;
+}
+
+#sidebar-container .menu a:hover {
+  background: rgba(255, 255, 255, .07);
+  color: #fff !important;
+  border-left-color: var(--ch-primary-soft);
+  padding-left: 1.25rem !important;
+  text-decoration: none;
+}
+
+#sidebar-container .menu a.active,
+#sidebar-container .menu a[class*="active"] {
+  background: rgba(255, 255, 255, .12);
+  color: #fff !important;
+  border-left-color: #fff;
+}
+
+#sidebar-container .menu .icon { transition: transform .25s ease; }
+#sidebar-container .menu a:hover .icon { transform: scale(1.15) rotate(-4deg); }
+
+/* ── Top Navbar ──────────────────────────────────────────────────────────── */
+
+.navbar.bg-light {
+  background: #fff !important;
+  border-bottom: 1px solid var(--ch-border) !important;
+  box-shadow: var(--ch-shadow-sm);
+  padding: .55rem 1rem;
+}
+
+.navbar .nav-link.text-dark {
+  color: var(--ch-text) !important;
+  font-weight: 600;
+  font-size: .93rem;
+  transition: var(--ch-transition);
+}
+
+.navbar .nav-link.text-dark:hover { color: var(--ch-primary) !important; }
+
+.navbar .rounded-circle {
+  border: 2px solid var(--ch-primary-tint);
+  transition: var(--ch-transition);
+}
+.navbar .nav-link:hover .rounded-circle {
+  border-color: var(--ch-primary);
+  transform: scale(1.06);
+}
+
+.dropdown-menu {
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius);
+  box-shadow: var(--ch-shadow-md);
+  padding: .35rem;
+  animation: ch-fade-in .18s ease-out;
+}
+.dropdown-item {
+  border-radius: 8px;
+  padding: .55rem .9rem;
+  font-size: .9rem;
+  transition: background .15s ease;
+}
+.dropdown-item:hover { background: var(--ch-primary-tint); color: var(--ch-primary-dark); }
+.dropdown-item.text-danger:hover { background: var(--ch-danger-soft); color: var(--ch-danger); }
+
+/* ── Main content / hero ─────────────────────────────────────────────────── */
+
+#content, .bg-grey {
+  background: var(--ch-surface) !important;
+  min-height: calc(100vh - 60px);
+}
+
+section.bg-light.py-3 {
+  background: linear-gradient(135deg, #fff 0%, var(--ch-primary-bg) 100%) !important;
+  border-bottom: 1px solid var(--ch-border);
+  padding: 2rem 0 !important;
+}
+
+section.bg-light.py-3 h1 {
+  color: var(--ch-primary-dark);
+  font-weight: 800 !important;
+  letter-spacing: -.4px;
+}
+
+section.bg-light.py-3 h1 #bienvenidoNombre,
+section.bg-light.py-3 h1 span:not(.sr-only) {
+  background: linear-gradient(90deg, var(--ch-primary), var(--ch-primary-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+section.bg-light.py-3 .lead { color: var(--ch-text-muted) !important; }
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--ch-card);
+  border: 1px solid var(--ch-border) !important;
+  border-radius: var(--ch-radius-lg) !important;
+  box-shadow: var(--ch-shadow-sm);
+  transition: var(--ch-transition);
+  overflow: hidden;
+}
+.card.rounded-0 { border-radius: var(--ch-radius-lg) !important; }
+.card:hover { box-shadow: var(--ch-shadow-md); transform: translateY(-2px); }
+
+.card-header {
+  border-bottom: 1px solid var(--ch-border);
+  padding: .95rem 1.2rem;
+  background: #fff !important;
+  font-weight: 700;
+}
+.card-header.bg-light {
+  background: linear-gradient(180deg, #fdfcff 0%, #f5f1fb 100%) !important;
+}
+.card-header.bg-primary {
+  background: linear-gradient(135deg, var(--ch-primary) 0%, var(--ch-primary-dark) 100%) !important;
+  color: #fff !important;
+}
+.card-header h6 { color: var(--ch-primary-dark); letter-spacing: .2px; }
+.card-header.bg-primary h6 { color: #fff; }
+
+.card-body { padding: 1.2rem; }
+
+/* ── Lista de propuestas/postulaciones (filas border-bottom dentro de cards) */
+
+.card-body .border-bottom {
+  border-color: var(--ch-border) !important;
+  transition: var(--ch-transition);
+  padding: 1rem !important;
+  margin: .25rem -.5rem !important;
+  border-radius: 10px;
+}
+.card-body .border-bottom:hover {
+  background: var(--ch-primary-bg);
+  border-color: transparent !important;
+  transform: translateX(2px);
+}
+.card-body .border-bottom:last-child { border-bottom: none !important; margin-bottom: 0 !important; }
+
+.card-body h5.text-primary {
+  color: var(--ch-primary-dark) !important;
+  font-weight: 700 !important;
+  letter-spacing: -.2px;
+}
+
+/* ── Botones ─────────────────────────────────────────────────────────────── */
+
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  transition: var(--ch-transition);
+  border-width: 1.5px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--ch-primary) 0%, var(--ch-primary-hover) 100%) !important;
+  border-color: var(--ch-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(75, 32, 140, .25);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(135deg, var(--ch-primary-hover) 0%, var(--ch-primary) 100%) !important;
+  border-color: var(--ch-primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(75, 32, 140, .35);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: .65; transform: none; box-shadow: none; }
+
+.btn-outline-primary {
+  color: var(--ch-primary) !important;
+  border-color: var(--ch-primary) !important;
+  background: transparent;
+}
+.btn-outline-primary:hover {
+  background: var(--ch-primary) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 32, 140, .25);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  border-color: #16a34a !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, .25);
+}
+.btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(22, 163, 74, .35); }
+
+.btn-outline-info {
+  color: var(--ch-primary-soft) !important;
+  border-color: var(--ch-primary-soft) !important;
+}
+.btn-outline-info:hover {
+  background: var(--ch-primary-soft) !important;
+  color: #fff !important;
+  border-color: var(--ch-primary-soft) !important;
+}
+
+.btn-outline-danger {
+  color: var(--ch-danger) !important;
+  border-color: var(--ch-danger) !important;
+}
+.btn-outline-danger:hover {
+  background: var(--ch-danger) !important;
+  color: #fff !important;
+}
+
+.btn-sm { padding: .35rem .85rem; font-size: .82rem; }
+.btn-block { width: 100%; }
+
+/* Botón "Aplicar" */
+.apply-btn { min-width: 130px; position: relative; overflow: hidden; }
+.apply-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+  transition: left .55s ease;
+}
+.apply-btn:hover::after { left: 100%; }
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+
+.badge {
+  font-weight: 600;
+  letter-spacing: .3px;
+  padding: .4em .75em;
+  border-radius: 999px;
+  font-size: .72rem;
+}
+
+.badge-activa,
+.badge-success,
+.badge.badge-success {
+  background: var(--ch-success-soft) !important;
+  color: var(--ch-success) !important;
+}
+.badge-cerrada,
+.badge-danger,
+.badge.badge-danger {
+  background: var(--ch-danger-soft) !important;
+  color: var(--ch-danger) !important;
+}
+.badge-borrador,
+.badge-secondary,
+.badge.badge-secondary {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
+.badge-warning,
+.badge.badge-warning {
+  background: var(--ch-warning-soft) !important;
+  color: var(--ch-warning) !important;
+}
+
+/* ── Iconos Ionicons ─────────────────────────────────────────────────────── */
+
+.icon.ion-md-pricetag.text-primary,
+.icon.ion-md-business,
+.icon.ion-md-pricetag,
+.icon.ion-md-stats,
+.icon.ion-md-apps,
+.icon.ion-md-paper,
+.icon.ion-md-person { color: var(--ch-primary); }
+
+.text-primary { color: var(--ch-primary) !important; }
+.text-success { color: var(--ch-success) !important; }
+.text-danger  { color: var(--ch-danger) !important; }
+.text-muted   { color: var(--ch-text-muted) !important; }
+
+/* ── Forms ───────────────────────────────────────────────────────────────── */
+
+.form-group { margin-bottom: 1.1rem; }
+
+.form-group > label,
+.form-group label {
+  font-weight: 600;
+  font-size: .85rem;
+  color: var(--ch-text);
+  margin-bottom: .35rem;
+  display: inline-block;
+}
+
+.form-control {
+  border: 1.5px solid var(--ch-border) !important;
+  border-radius: 10px !important;
+  padding: .65rem .9rem !important;
+  font-size: .92rem !important;
+  height: auto !important;
+  background: #fff !important;
+  color: var(--ch-text) !important;
+  transition: var(--ch-transition);
+  box-shadow: none !important;
+}
+.form-control:focus {
+  border-color: var(--ch-primary) !important;
+  box-shadow: 0 0 0 4px rgba(75, 32, 140, .14) !important;
+  outline: none;
+}
+.form-control:hover:not(:focus) { border-color: var(--ch-primary-soft) !important; }
+
+select.form-control {
+  appearance: auto;
+  -webkit-appearance: auto;
+  cursor: pointer;
+}
+
+textarea.form-control { min-height: 96px; resize: vertical; }
+
+.form-text { font-size: .78rem; color: var(--ch-text-muted) !important; margin-top: .25rem; }
+
+/* ── Alerts ──────────────────────────────────────────────────────────────── */
+
+.alert {
+  border: none;
+  border-radius: var(--ch-radius);
+  padding: .85rem 1.1rem;
+  font-size: .9rem;
+  font-weight: 500;
+  animation: ch-fade-in .25s ease-out;
+}
+.alert-success { background: var(--ch-success-soft); color: var(--ch-success); }
+.alert-danger,
+.alert-error   { background: var(--ch-danger-soft); color: var(--ch-danger); }
+.alert-info    { background: var(--ch-primary-tint); color: var(--ch-primary-dark); }
+.alert-warning { background: var(--ch-warning-soft); color: var(--ch-warning); }
+
+/* ── Spinner ─────────────────────────────────────────────────────────────── */
+
+.spinner-border.text-primary { color: var(--ch-primary) !important; }
+
+/* ── User profile page (user-begin) ─────────────────────────────────────── */
+
+.profile-card,
+.card.profile,
+.card.user-profile {
+  background: linear-gradient(135deg, #fff 0%, var(--ch-primary-bg) 100%);
+}
+
+img.rounded-circle {
+  transition: var(--ch-transition);
+}
+img.rounded-circle:hover { transform: scale(1.04); }
+
+/* ── Tablas ──────────────────────────────────────────────────────────────── */
+
+.table {
+  background: #fff;
+  border-radius: var(--ch-radius);
+  overflow: hidden;
+}
+.table thead th {
+  background: var(--ch-primary-bg);
+  color: var(--ch-primary-dark);
+  font-weight: 700;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-bottom: 1px solid var(--ch-border);
+}
+.table tbody tr { transition: background .15s ease; }
+.table tbody tr:hover { background: var(--ch-primary-bg); }
+
+/* ── Empty / loading states ─────────────────────────────────────────────── */
+
+.text-center.py-4 { padding: 2.5rem 0 !important; }
+.text-center.py-4 .spinner-border { width: 2.6rem; height: 2.6rem; border-width: .25rem; }
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ch-surface); }
+::-webkit-scrollbar-thumb {
+  background: var(--ch-primary-soft);
+  border-radius: 6px;
+  border: 2px solid var(--ch-surface);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ch-primary); }
+
+/* ── Botón "Cerrar sesión" en dropdown ───────────────────────────────────── */
+
+.dropdown-item.text-danger { color: var(--ch-danger) !important; font-weight: 600; }
+
+/* ── bg-primary global override (sidebar uses this class) ───────────────── */
+
+.bg-primary {
+  background: var(--ch-primary) !important;
+}
+
+/* ── Modificadores específicos del único hover en cards de propuesta ───── */
+
+.propuesta-card { transition: var(--ch-transition); }
+.propuesta-card:hover { box-shadow: var(--ch-shadow-lg) !important; transform: translateY(-3px); }
+
+/* ── Responsive: sidebar colapsa en pantallas pequeñas ──────────────────── */
+
+@media (max-width: 768px) {
+  #sidebar-container {
+    min-width: 70px;
+    max-width: 70px;
+  }
+  #sidebar-container .logo a { font-size: 0; }
+  #sidebar-container .logo a::first-letter { font-size: 1.6rem; color: #fff; -webkit-text-fill-color: #fff; }
+  #sidebar-container .menu a {
+    text-align: center;
+    padding: .8rem .4rem !important;
+  }
+  #sidebar-container .menu a > *:not(.icon) { display: none; }
+  #sidebar-container .menu .icon { margin: 0 !important; font-size: 1.4rem; }
+}
+
+/* ── Small util: ".bg-grey" usado en main content ───────────────────────── */
+
+.bg-grey { background: var(--ch-surface) !important; }
+
+/* ── Forms con varios .form-row dentro de cards ─────────────────────────── */
+
+.form-row { margin-right: -.4rem; margin-left: -.4rem; }
+.form-row > .form-group { padding-right: .4rem; padding-left: .4rem; }
+
+/* ── Botón con icono que arranca con .icon ──────────────────────────────── */
+
+.btn .icon { vertical-align: middle; margin-right: .25rem; font-size: 1.1em; }
+
+/* ── Hover de filas pero conservando los enlaces de aplicar ─────────────── */
+
+.border-bottom .btn { white-space: nowrap; }
+
+/* ── Loading dots para "Cargando..." ────────────────────────────────────── */
+
+.mt-2.text-muted::after,
+.mt-2.text-muted span.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  text-align: left;
+  animation: ch-dots 1.2s steps(4, end) infinite;
+}
+@keyframes ch-dots {
+  0%, 20% { content: ''; }
+  40%     { content: '.'; }
+  60%     { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+
+/* ── Dropdown "Configuración" del navbar (especial user-begin) ───────────
+   En user-begin.html el dropdown lleva data-toggle="dropdown" pero la
+   página NO carga Bootstrap JS, así que el menú nunca se abre y el
+   botón aparece sin estilo. Lo arreglamos:
+   1) Pintamos el .nav-link.dropdown-toggle como pill de marca aunque
+      no tenga la clase .text-dark.
+   2) Abrimos el .dropdown-menu en :hover y :focus-within → CSS-only,
+      sigue funcionando si Bootstrap JS está cargado.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.navbar .nav-item.dropdown { position: relative; }
+
+.navbar .nav-link.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .45rem 1rem !important;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--ch-primary) 0%, var(--ch-primary-hover) 100%);
+  color: #fff !important;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .2px;
+  box-shadow: 0 4px 14px rgba(75, 32, 140, .22);
+  transition: var(--ch-transition);
+  cursor: pointer;
+}
+.navbar .nav-link.dropdown-toggle:hover,
+.navbar .nav-link.dropdown-toggle:focus {
+  background: linear-gradient(135deg, var(--ch-primary-hover) 0%, var(--ch-primary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(75, 32, 140, .35);
+  color: #fff !important;
+  text-decoration: none;
+}
+
+/* La flechita ::after de Bootstrap → blanca para que se vea en el botón morado */
+.navbar .nav-link.dropdown-toggle::after {
+  border-top-color: #fff;
+  margin-left: .15rem;
+  vertical-align: middle;
+}
+
+/* Si el nav-link además trae avatar (caso user-dashboard / company-dashboard),
+   relajamos el padding y le devolvemos fondo claro para no romper ese diseño. */
+.navbar .nav-link.dropdown-toggle:has(img),
+.navbar .nav-link.dropdown-toggle.text-dark {
+  background: transparent !important;
+  color: var(--ch-text) !important;
+  box-shadow: none;
+  padding: .35rem .6rem !important;
+}
+.navbar .nav-link.dropdown-toggle:has(img):hover,
+.navbar .nav-link.dropdown-toggle.text-dark:hover {
+  background: var(--ch-primary-tint) !important;
+  color: var(--ch-primary-dark) !important;
+  transform: none;
+  box-shadow: none;
+}
+.navbar .nav-link.dropdown-toggle:has(img)::after,
+.navbar .nav-link.dropdown-toggle.text-dark::after {
+  border-top-color: var(--ch-text-muted);
+}
+
+/* Abrir el menú con CSS puro: hover sobre el item o foco dentro */
+.navbar .nav-item.dropdown:hover > .dropdown-menu,
+.navbar .nav-item.dropdown:focus-within > .dropdown-menu,
+.navbar .nav-item.dropdown > .dropdown-menu.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Estado inicial del menú: oculto pero animable */
+.navbar .nav-item.dropdown > .dropdown-menu {
+  display: block;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  margin-top: .35rem;
+  min-width: 180px;
+}
+
+/* Puente invisible entre el toggle y el menú para que el hover no se rompa */
+.navbar .nav-item.dropdown > .dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+/* ── Animación de entrada para tarjetas dentro de la lista ───────────────── */
+
+#propuestas-body .border-bottom,
+#postulaciones-body .border-bottom,
+#empresas-body .border-bottom { animation: ch-fade-in .35s ease-out both; }
+#propuestas-body .border-bottom:nth-child(2)  { animation-delay: .04s; }
+#propuestas-body .border-bottom:nth-child(3)  { animation-delay: .08s; }
+#propuestas-body .border-bottom:nth-child(4)  { animation-delay: .12s; }
+#propuestas-body .border-bottom:nth-child(5)  { animation-delay: .16s; }
+#propuestas-body .border-bottom:nth-child(6)  { animation-delay: .20s; }

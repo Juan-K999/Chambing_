@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styled.css">
+
+    <title>Postulaciones - CHAMBING</title>
+</head>
+
+<body>
+<div class="d-flex" id="content-wrapper">
+
+    <div id="sidebar-container" class="bg-primary">
+        <div class="logo">
+            <a href="/company-dashboard" class="text-light font-weight-bold mb-0 h4">CHAMBING</a>
+        </div>
+        <div class="menu">
+            <!-- Menú unificado exactamente como en los otros archivos -->
+            <a href="/company-dashboard" class="d-block text-light p-3 border-0 active">
+                <i class="icon ion-md-apps lead mr-2"></i> Mis Propuestas
+            </a>
+            <a href="/company-proposals" class="d-block text-light p-3 border-0">
+                <i class="icon ion-md-add-circle lead mr-2"></i> Nueva Propuesta
+            </a>
+            <a href="/edit-propuesta" class="d-block text-light p-3 border-0">
+                <i class="icon ion-md-create lead mr-2"></i> Editar Propuestas
+            </a>
+            <a href="/company-profile" class="d-block text-light p-3 border-0">
+                <i class="icon ion-md-person lead mr-2"></i> Mi Perfil
+            </a>
+        </div>
+    </div>
+
+    <div class="w-100">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                                <img src="images/user-1.png" class="rounded-circle" alt="avatar" width="35" height="35">
+                                <span id="nombreNav">Cargando...</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="/company-profile">Mi perfil</a>
+                                <a class="dropdown-item text-danger" href="/logout">Cerrar sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div id="content" class="bg-grey w-100">
+            <section class="bg-light py-3">
+                <div class="container">
+                    <h1 class="font-weight-bold mb-0">Postulaciones</h1>
+                    <p class="lead text-muted">Revisa y gestiona las postulaciones a tu propuesta seleccionada</p>
+                </div>
+            </section>
+
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 my-3">
+                            <div class="card rounded-0">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                    <h6 class="font-weight-bold mb-0">Postulantes</h6>
+                                    <a href="/edit-propuesta" class="btn btn-sm btn-outline-primary">Volver al listado</a>
+                                </div>
+                                <div class="card-body" id="postulaciones-body">
+                                    <p class="text-muted">Cargando postulaciones...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script>
+    let empresaActual = null;
+    const idPropuesta = new URLSearchParams(window.location.search).get('idPropuesta');
+
+    // Función de escape (por si acaso)
+    function escHtml(s) {
+        return s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+    }
+
+    async function init() {
+        try {
+            const res = await fetch('/empresa/me');
+            if (!res.ok) {
+                window.location.href = '/login';
+                return;
+            }
+
+            empresaActual = await res.json();
+            document.getElementById('nombreNav').textContent = empresaActual.nombreEmpresa || 'Empresa';
+
+            if (!idPropuesta) {
+                alert('No se especificó una propuesta.');
+                window.location.href = '/company-dashboard';
+                return;
+            }
+
+            await cargarPostulaciones();
+        } catch (e) {
+            console.error(e);
+            window.location.href = '/login';
+        }
+    }
+
+    async function cargarPostulaciones() {
+        const container = document.getElementById('postulaciones-body');
+
+        try {
+            const response = await fetch(`/empresa/${empresaActual.idEmpresa}/postulaciones/${idPropuesta}`);
+            if (!response.ok) throw new Error("Error " + response.status);
+
+            const postulaciones = await response.json();
+            container.innerHTML = '';
+
+            // Solo mostramos las pendientes (como estaba en tu código original)
+            const pendientes = postulaciones.filter(p => p.estadoPostulacion === "Pendiente");
+
+            if (pendientes.length === 0) {
+                container.innerHTML = `<p class="text-muted">No hay postulaciones pendientes para esta propuesta.</p>`;
+                return;
+            }
+
+            pendientes.forEach(p => {
+                const div = document.createElement('div');
+                div.classList.add('border-bottom', 'pb-3', 'mb-3');
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="font-weight-bold text-primary">${escHtml(p.usuarioNombre || 'Sin nombre')}</h5>
+                        <span class="badge badge-info">${escHtml(p.estadoPostulacion)}</span>
+                    </div>
+                    <p class="text-muted mb-1">
+                        <i class="icon ion-md-pricetag"></i> ${escHtml(p.propuestaTitulo || '')}
+                    </p>
+                    <p><strong>Email:</strong> ${escHtml(p.usuarioEmail || '')}</p>
+                    <p><small><strong>Fecha:</strong> ${p.fechaPostulacion ? new Date(p.fechaPostulacion).toLocaleDateString('es-CO') : ''}</small></p>
+                    <div class="d-flex gap-2">
+                        <button onclick="gestionarPostulacion('${p.idPostulacion}', 'Aprobado', this)" class="btn btn-success btn-sm">
+                            <i class="icon ion-md-checkmark"></i> Aprobar
+                        </button>
+                        <button onclick="gestionarPostulacion('${p.idPostulacion}', 'Rechazado', this)" class="btn btn-danger btn-sm">
+                            <i class="icon ion-md-close"></i> Rechazar
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `<p class="text-danger">No se pudieron cargar las postulaciones.</p>`;
+        }
+    }
+
+    async function gestionarPostulacion(idPostulacion, nuevoEstado, button) {
+        if (!confirm(`¿Deseas ${nuevoEstado.toLowerCase()} esta postulación?`)) return;
+
+        button.disabled = true;
+
+        try {
+            const response = await fetch(`/empresa/${empresaActual.idEmpresa}/postulaciones/${idPostulacion}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: nuevoEstado })
+            });
+
+            if (response.ok) {
+                // Eliminamos la tarjeta visualmente (como en tu código original)
+                button.closest('.border-bottom').remove();
+            } else {
+                const msg = await response.text();
+                alert("Error al actualizar: " + msg);
+                button.disabled = false;
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error de conexión.");
+            button.disabled = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

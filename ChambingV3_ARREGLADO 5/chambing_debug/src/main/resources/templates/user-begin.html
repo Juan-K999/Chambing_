@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styled.css">
+
+    <title>Usuario</title>
+</head>
+
+<body>
+<div class="d-flex" id="content-wrapper">
+
+    <div id="sidebar-container" class="bg-primary">
+        <div class="logo">
+            <a href="/user-dashboard" class="text-light font-weight-bold mb-0 h4">
+                CHAMBING
+            </a>
+        </div>
+        <div class="menu">
+            <a href="/companies-registers" class="d-block text-light p-3">
+                <i class="icon ion-md-apps mr-2"></i>Empresas
+            </a>
+            <a href="#" class="d-block text-light p-3">
+                <i class="icon ion-md-person mr-2"></i>Perfil
+            </a>
+            <a href="/only-proporsals" class="d-block text-light p-3">
+                <i class="icon ion-md-person mr-2"></i>Propuesta
+            </a>
+        </div>
+    </div>
+
+    <div class="w-100">
+
+        <nav class="navbar navbar-light bg-light border-bottom">
+            <div class="container">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            Configuración
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="content" class="bg-grey w-100">
+
+            <section class="bg-light py-3">
+                <div class="container">
+                    <h1 class="font-weight-bold">Bienvenido</h1>
+                </div>
+            </section>
+
+            <section>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-header">
+                            <b>Modificar Perfil</b>
+                        </div>
+
+                        <div class="card-body">
+
+                            <form id="formModificacion">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <input type="text" id="inputNombre" class="form-control" placeholder="Nombre">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="text" id="inputApellido" class="form-control" placeholder="Apellido">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="number" id="inputEdad" class="form-control" placeholder="Edad">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <select id="selectGenero" class="form-control">
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" id="inputCalle" class="form-control" placeholder="Dirección">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <select id="selectDepartamento" class="form-control"></select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <select id="selectCiudad" class="form-control"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="email" id="inputEmail" class="form-control" placeholder="Email">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="password" id="inputPassword" class="form-control" placeholder="Nueva contraseña">
+                                </div>
+
+                                <button class="btn btn-primary">Guardar</button>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<script>
+const API_URL = "http://localhost:9999";
+let usuarioId = null;
+
+// ubicaciones
+const dataUbicacion = {
+    "Cundinamarca": ["Bogotá", "Zipaquirá", "Chía"],
+    "Antioquia": ["Medellín", "Envigado"],
+    "Valle del Cauca": ["Cali"],
+    "Atlántico": ["Barranquilla"]
+};
+
+function cargarDepartamentos() {
+    const dep = selectDepartamento;
+    Object.keys(dataUbicacion).forEach(d => dep.add(new Option(d, d)));
+}
+
+function cargarCiudades(dep) {
+    selectCiudad.innerHTML = "";
+    dataUbicacion[dep].forEach(c => selectCiudad.add(new Option(c, c)));
+}
+
+async function cargarUsuario() {
+    const res = await fetch(`${API_URL}/usuario/me`, { credentials: "include" });
+    const user = await res.json();
+
+    usuarioId = user.idUsuario || user.id;
+
+    inputNombre.value = user.nombre || "";
+    inputApellido.value = user.apellido || "";
+    inputEdad.value = user.edad || "";
+    inputEmail.value = user.email || "";
+    selectGenero.value = user.genero;
+
+    if (user.direccion) {
+        inputCalle.value = user.direccion.calle;
+        selectDepartamento.value = user.direccion.departamento;
+        cargarCiudades(user.direccion.departamento);
+        selectCiudad.value = user.direccion.ciudad;
+    }
+}
+
+formModificacion.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const datos = {
+        nombre: inputNombre.value,
+        apellido: inputApellido.value,
+        edad: parseInt(inputEdad.value),
+        email: inputEmail.value,
+        genero: selectGenero.value,
+        direccion: {
+            calle: inputCalle.value,
+            departamento: selectDepartamento.value,
+            ciudad: selectCiudad.value
+        }
+    };
+
+    if (inputPassword.value) {
+        datos.contrasena = inputPassword.value;
+    }
+
+    const res = await fetch(`${API_URL}/usuario/${usuarioId}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+    });
+
+    alert(res.ok ? "Actualizado" : "Error");
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    cargarDepartamentos();
+    cargarCiudades("Cundinamarca");
+    selectDepartamento.addEventListener("change", e => cargarCiudades(e.target.value));
+    cargarUsuario();
+});
+</script>
+
+</body>
+</html>

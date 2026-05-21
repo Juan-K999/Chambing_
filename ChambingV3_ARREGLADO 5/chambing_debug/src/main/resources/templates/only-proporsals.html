@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Vacantes - CHAMBING</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styled.css}">
+  <style>
+    /* ── Paginación (igual que panel admin) ── */
+    .pag-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .75rem 0 0;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .pag-info { font-size: .78rem; color: #6b7280; }
+    .pag-btns { display: flex; gap: .3rem; flex-wrap: wrap; }
+    .pag-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 .55rem;
+      border-radius: 7px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: #334155;
+      font-size: .78rem;
+      cursor: pointer;
+      transition: all .12s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pag-btn:hover:not(:disabled) { background: #f1f5f9; border-color: #cbd5e1; }
+    .pag-btn.active {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+      font-weight: 600;
+    }
+    .pag-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── Buscador (igual que panel admin) ── */
+    .search-input {
+      font-size: .82rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      padding: .38rem .75rem;
+      width: 240px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14,165,233,.12);
+    }
+
+    .badge-activa   { background:#16a34a; color:#fff; }
+    .badge-cerrada  { background:#dc2626; color:#fff; }
+    .badge-borrador { background:#6b7280; color:#fff; }
+
+    .filtro-bar {
+      background:#fff;
+      padding:14px;
+      border-radius:.5rem;
+      margin-bottom:1rem;
+      box-shadow:0 2px 8px rgba(0,0,0,.05);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .5rem;
+    }
+  </style>
+</head>
+<body>
+<div class="d-flex" id="content-wrapper">
+
+  <div id="sidebar-container" class="bg-primary">
+    <div class="logo">
+      <a href="/user-dashboard" class="text-light font-weight-bold mb-0 h4">CHAMBING</a>
+    </div>
+    <div class="menu">
+      <a href="/companies-registers" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-apps lead mr-2"></i> Empresas
+      </a>
+      <a href="/only-proporsals" class="d-block text-light p-3 border-0 active">
+        <i class="icon ion-md-stats lead mr-2"></i> Propuestas
+      </a>
+      <a href="/proposals-states" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-paper lead mr-2"></i> Mis Postulaciones
+      </a>
+      <a href="/user-begin" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-person lead mr-2"></i> Perfil
+      </a>
+    </div>
+  </div>
+
+  <div class="w-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <div class="container">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+              <img th:src="@{/images/user-1.png}" class="rounded-circle" width="35" height="35">
+              <span id="nombreNav">Configuración</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="/user-begin">Mi perfil</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="/logout">Cerrar sesión</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="content" class="bg-grey w-100">
+      <section class="bg-light py-3">
+        <div class="container">
+          <h1 class="font-weight-bold mb-0">Vacantes Disponibles</h1>
+          <p class="lead text-muted">Explora todas las ofertas laborales disponibles.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+
+          <!-- Barra de búsqueda y filtro de categoría -->
+          <div class="filtro-bar mt-3">
+            <input type="text" id="searchTexto" class="search-input"
+                   placeholder="Buscar por título o descripción…"
+                   oninput="onSearch()">
+            <input type="text" id="searchCategoria" class="search-input"
+                   placeholder="Categoría…"
+                   oninput="onSearch()">
+            <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">Limpiar</button>
+          </div>
+
+          <div class="col-lg-12 my-3 px-0">
+            <div class="card rounded-0">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h6 class="font-weight-bold mb-0">Listado de Vacantes</h6>
+                <small id="conteo" class="text-muted"></small>
+              </div>
+              <div class="card-body" id="propuesta-lista">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status"></div>
+                  <p class="mt-2 text-muted">Cargando vacantes...</p>
+                </div>
+              </div>
+              <!-- Paginación dentro del card (igual que admin) -->
+              <div class="card-footer bg-white">
+                <div class="pag-wrap" id="pag-wrap">
+                  <span class="pag-info" id="pag-info"></span>
+                  <div class="pag-btns" id="pag-btns"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script>
+const PAGE_SIZE = 10;
+
+let usuarioActual  = null;
+let todasPropuestas = [];   // lista completa recibida del servidor
+let listaFiltrada  = [];    // después de aplicar búsqueda
+let paginaActual   = 0;     // índice base-0 (igual que admin)
+let searchTimer    = null;
+
+function escHtml(s) {
+  return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+}
+
+/* ── Init ── */
+async function init() {
+  try {
+    const res = await fetch('/usuario/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    usuarioActual = await res.json();
+    document.getElementById('nombreNav').textContent = usuarioActual.nombre || 'Usuario';
+    await cargarPropuestas();
+  } catch(e) { window.location.href = '/login'; }
+}
+
+async function cargarPropuestas() {
+  const contenedor = document.getElementById('propuesta-lista');
+  try {
+    const res = await fetch('/usuario/propuestas');
+    todasPropuestas = await res.json();
+    listaFiltrada   = todasPropuestas;
+    paginaActual    = 0;
+    renderPagina();
+  } catch(e) {
+    contenedor.innerHTML = "<p class='text-danger'>No se pudieron cargar las propuestas.</p>";
+  }
+}
+
+/* ── Búsqueda con debounce (igual que admin) ── */
+function onSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    const texto = document.getElementById('searchTexto').value.toLowerCase().trim();
+    const cat   = document.getElementById('searchCategoria').value.toLowerCase().trim();
+
+    listaFiltrada = todasPropuestas.filter(p =>
+      (!texto || (p.titulo||'').toLowerCase().includes(texto)
+               || (p.descripcion||'').toLowerCase().includes(texto)) &&
+      (!cat   || (p.categoria||'').toLowerCase().includes(cat))
+    );
+    paginaActual = 0;
+    renderPagina();
+  }, 300);
+}
+
+function limpiarFiltros() {
+  document.getElementById('searchTexto').value    = '';
+  document.getElementById('searchCategoria').value = '';
+  listaFiltrada = todasPropuestas;
+  paginaActual  = 0;
+  renderPagina();
+}
+
+/* ── Render de la página actual ── */
+function renderPagina() {
+  const total      = listaFiltrada.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  paginaActual     = Math.min(paginaActual, totalPages - 1);
+
+  const inicio = paginaActual * PAGE_SIZE;
+  const fin    = Math.min(inicio + PAGE_SIZE, total);
+  const pagina = listaFiltrada.slice(inicio, fin);
+
+  const from = total === 0 ? 0 : inicio + 1;
+  document.getElementById('conteo').textContent   = total + ' vacantes';
+  document.getElementById('pag-info').textContent = `Mostrando ${from}–${fin} de ${total}`;
+
+  const contenedor = document.getElementById('propuesta-lista');
+  if (pagina.length === 0) {
+    contenedor.innerHTML = "<p class='text-muted py-3'>No se encontraron vacantes con ese criterio.</p>";
+  } else {
+    contenedor.innerHTML = pagina.map(p => {
+      const cerrada = (p.estado || '').toLowerCase() === 'cerrada';
+      return `
+        <div class="border-bottom pb-3 mb-3">
+          <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+              <h5 class="font-weight-bold text-primary mb-1">${escHtml(p.titulo)}</h5>
+              <p class="text-muted small mb-1">
+                <i class="icon ion-md-business"></i> ${escHtml(p.empresaNombre || 'Empresa Confidencial')}
+                ${p.categoria ? ' &nbsp;|&nbsp; <i class="icon ion-md-pricetag"></i> ' + escHtml(p.categoria) : ''}
+              </p>
+            </div>
+            <span class="badge badge-${(p.estado||'').toLowerCase()} ml-2">${escHtml(p.estado || 'Activa')}</span>
+          </div>
+          <p class="mb-1 small">${escHtml(p.descripcion || '')}</p>
+          <p class="mb-2"><small><strong>Requisitos:</strong> ${escHtml(p.requisitos || '')}</small></p>
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="font-weight-bold text-success">$${Number(p.salario||0).toLocaleString('es-CO')}</span>
+            <button class="btn btn-sm ${cerrada ? 'btn-secondary' : 'btn-primary'}"
+              style="min-width:110px"
+              ${cerrada ? 'disabled' : `onclick="aplicarOferta('${escHtml(p.idPropuesta)}', this)"`}>
+              ${cerrada ? 'No disponible' : 'Aplicar Ahora'}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderPaginacion(totalPages);
+}
+
+/* ── Botones de paginación (igual que admin) ── */
+function renderPaginacion(totalPages) {
+  const cur        = paginaActual;
+  const MAX_VISIBLE = 7;
+  const half       = Math.floor(MAX_VISIBLE / 2);
+  let pStart       = Math.max(0, cur - half);
+  let pEnd         = Math.min(totalPages - 1, pStart + MAX_VISIBLE - 1);
+  if (pEnd - pStart < MAX_VISIBLE - 1) pStart = Math.max(0, pEnd - MAX_VISIBLE + 1);
+
+  let btns = '';
+  btns += `<button class="pag-btn" onclick="goPage(${cur - 1})" ${cur === 0 ? 'disabled' : ''}>‹</button>`;
+
+  if (pStart > 0) {
+    btns += `<button class="pag-btn" onclick="goPage(0)">1</button>`;
+    if (pStart > 1) btns += `<button class="pag-btn" disabled>…</button>`;
+  }
+  for (let i = pStart; i <= pEnd; i++) {
+    btns += `<button class="pag-btn ${i === cur ? 'active' : ''}" onclick="goPage(${i})">${i + 1}</button>`;
+  }
+  if (pEnd < totalPages - 1) {
+    if (pEnd < totalPages - 2) btns += `<button class="pag-btn" disabled>…</button>`;
+    btns += `<button class="pag-btn" onclick="goPage(${totalPages - 1})">${totalPages}</button>`;
+  }
+  btns += `<button class="pag-btn" onclick="goPage(${cur + 1})" ${cur >= totalPages - 1 ? 'disabled' : ''}>›</button>`;
+
+  document.getElementById('pag-btns').innerHTML = btns;
+}
+
+function goPage(page) {
+  const totalPages = Math.max(1, Math.ceil(listaFiltrada.length / PAGE_SIZE));
+  page = Math.max(0, Math.min(page, totalPages - 1));
+  if (page === paginaActual) return;
+  paginaActual = page;
+  renderPagina();
+  document.getElementById('propuesta-lista').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Aplicar oferta ── */
+async function aplicarOferta(idPropuesta, btn) {
+  if (!usuarioActual) { window.location.href = '/login'; return; }
+  btn.disabled   = true;
+  btn.textContent = 'Aplicando...';
+  try {
+    const res = await fetch(`/usuario/aplicar/${usuarioActual.idUsuario}/${idPropuesta}`, { method: 'POST' });
+    if (res.ok) {
+      btn.textContent = '✓ Aplicado';
+      btn.classList.replace('btn-primary', 'btn-success');
+    } else {
+      const msg = await res.text();
+      alert('Error: ' + msg);
+      btn.disabled   = false;
+      btn.textContent = 'Aplicar Ahora';
+    }
+  } catch(e) {
+    alert('Error de conexión.');
+    btn.disabled   = false;
+    btn.textContent = 'Aplicar Ahora';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

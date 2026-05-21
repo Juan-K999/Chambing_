@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse - EMPLEO CARTAGENA</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+  <link rel="stylesheet" th:href="@{/css/login.css}">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .tab-btn { cursor:pointer; padding:8px 20px; border:2px solid #dee2e6; border-radius:50px;
+               background:#fff; font-weight:600; transition:all .2s; }
+    .tab-btn.active { background:#0d6efd; color:#fff; border-color:#0d6efd; }
+    .alert-msg { padding:10px 14px; border-radius:8px; font-size:.9rem; }
+    .error-msg  { background:#fee2e2; color:#b91c1c; }
+    .success-msg{ background:#dcfce7; color:#166534; }
+
+    /* Bootstrap fija un height pequeño para .form-control y login.css usa padding 14px:
+       en un <select> eso aplasta el contenido y el valor seleccionado no se ve.
+       Forzamos height auto y line-height coherente sólo para los <select>. */
+    select.form-control {
+      height: auto;
+      line-height: 1.5;
+      appearance: auto;
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
+      color: #212529;
+    }
+  </style>
+</head>
+<body class="login-body">
+
+<div class="login-container">
+  <div class="login-wrapper">
+
+    <div class="login-info">
+      <div class="info-content">
+        <div class="logo-section">
+          <img th:src="@{/images/logo.png}" alt="Logo" class="login-logo">
+          <h1>EMPLEO CARTAGENA</h1>
+        </div>
+        <h2>Únete a Nosotros</h2>
+        <p>Encuentra oportunidades laborales en Cartagena</p>
+      </div>
+    </div>
+
+    <div class="login-form-section">
+      <div class="form-container">
+
+        <h2 class="form-title">Crear Cuenta</h2>
+
+        <!-- Selector de tipo -->
+        <div class="d-flex gap-2 mb-3">
+          <button type="button" class="tab-btn active" id="btnUser" onclick="switchRole('user')">
+            <i class="fas fa-user"></i> Soy Trabajador
+          </button>
+          <button type="button" class="tab-btn" id="btnEmpresa" onclick="switchRole('empresa')">
+            <i class="fas fa-building"></i> Soy Empresa
+          </button>
+        </div>
+
+        <div id="msgBox" style="display:none; margin-bottom:12px;"></div>
+
+        <form id="registerForm" novalidate>
+
+          <!-- ══ CAMPOS USUARIO ══ -->
+          <div id="userFields">
+
+            <div class="form-group">
+              <label class="form-label">Tipo de Documento</label>
+              <select name="tipoDocumento" class="form-control" id="selectTipoDocumento">
+                <option value="">Cargando...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Número de Documento</label>
+              <input type="number" name="documento" class="form-control" placeholder="Ej: 1234567890">
+            </div>
+
+            <div style="display:flex; gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Nombre</label>
+                <input type="text" name="nombre" class="form-control" placeholder="Tu nombre">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Apellido</label>
+                <input type="text" name="apellido" class="form-control" placeholder="Tu apellido">
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Edad</label>
+                <input type="number" name="edad" class="form-control" min="18" placeholder="Mín. 18">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Género</label>
+                <select name="genero" class="form-control" id="selectGenero">
+                  <option value="">Cargando...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Dirección (Calle)</label>
+              <input type="text" name="calle" class="form-control" placeholder="Ej: Calle 30 #12-45">
+            </div>
+            <div style="display:flex; gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Ciudad</label>
+                <input type="text" name="ciudad" class="form-control" placeholder="Cartagena">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Departamento</label>
+                <input type="text" name="departamento" class="form-control" placeholder="Bolívar">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Correo</label>
+              <input type="email" name="email" class="form-control" placeholder="tu@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contraseña</label>
+              <input type="password" name="contrasena" class="form-control" placeholder="Mínimo 4 caracteres">
+            </div>
+          </div>
+
+          <!-- ══ CAMPOS EMPRESA ══ -->
+          <div id="empresaFields" style="display:none;">
+
+            <div class="form-group">
+              <label class="form-label">NIT</label>
+              <input type="number" name="nit" class="form-control" placeholder="Ej: 900123456">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nombre de la Empresa</label>
+              <input type="text" name="nombreEmpresa" class="form-control" placeholder="Razón social">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Dirección (Calle)</label>
+              <input type="text" name="calleEmpresa" class="form-control" placeholder="Ej: Av. El Bosque #4-52">
+            </div>
+            <div style="display:flex; gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Ciudad</label>
+                <input type="text" name="ciudadEmpresa" class="form-control" placeholder="Cartagena">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">Departamento</label>
+                <input type="text" name="departamentoEmpresa" class="form-control" placeholder="Bolívar">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Correo</label>
+              <input type="email" name="correoEmpresa" class="form-control" placeholder="empresa@correo.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contraseña</label>
+              <input type="password" name="contrasenaEmpresa" class="form-control" placeholder="Mínimo 4 caracteres">
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn-login" id="btnSubmit">
+            <i class="fas fa-user-plus"></i> Crear Cuenta
+          </button>
+        </form>
+
+        <div class="register-section" style="margin-top:15px;">
+          <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Cargar catálogos (géneros y tipos de documento) desde MySQL ─────────────
+async function cargarCatalogos() {
+  // Tipos de documento
+  try {
+    const res = await fetch('/api/catalogos/tipos-documento');
+    if (res.ok) {
+      const tipos = await res.json();
+      const sel = document.getElementById('selectTipoDocumento');
+      sel.innerHTML = '';
+      tipos.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.codigo;
+        opt.textContent = t.nombre;
+        sel.appendChild(opt);
+      });
+    }
+  } catch (e) { console.warn('No se pudieron cargar tipos de documento:', e); }
+
+  // Géneros
+  try {
+    const res = await fetch('/api/catalogos/generos');
+    if (res.ok) {
+      const generos = await res.json();
+      const sel = document.getElementById('selectGenero');
+      sel.innerHTML = '';
+      generos.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.nombre;
+        opt.textContent = g.nombre;
+        sel.appendChild(opt);
+      });
+    }
+  } catch (e) { console.warn('No se pudieron cargar géneros:', e); }
+}
+document.addEventListener('DOMContentLoaded', cargarCatalogos);
+
+let currentRole = 'user';
+
+function switchRole(role) {
+  currentRole = role;
+  document.getElementById('userFields').style.display    = role === 'user'    ? 'block' : 'none';
+  document.getElementById('empresaFields').style.display = role === 'empresa' ? 'block' : 'none';
+  document.getElementById('btnUser').classList.toggle('active',    role === 'user');
+  document.getElementById('btnEmpresa').classList.toggle('active', role === 'empresa');
+  hideMsg();
+}
+
+function showMsg(msg, tipo) {
+  const el = document.getElementById('msgBox');
+  el.className = 'alert-msg ' + (tipo === 'error' ? 'error-msg' : 'success-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideMsg() {
+  document.getElementById('msgBox').style.display = 'none';
+}
+
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  hideMsg();
+
+  const f = e.target;
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Registrando...';
+
+  let url, datos;
+
+  if (currentRole === 'user') {
+    url = '/usuario';
+    datos = {
+      tipoDocumento:  f.querySelector('[name="tipoDocumento"]').value,
+      documento:      parseInt(f.querySelector('[name="documento"]').value) || null,
+      nombre:         f.querySelector('[name="nombre"]').value.trim(),
+      apellido:       f.querySelector('[name="apellido"]').value.trim(),
+      edad:           parseInt(f.querySelector('[name="edad"]').value) || null,
+      genero:         f.querySelector('[name="genero"]').value,
+      email:          f.querySelector('[name="email"]').value.trim(),
+      contrasena:     f.querySelector('[name="contrasena"]').value,
+      roles:          ["USER"],
+      direccion: {
+        calle:        f.querySelector('[name="calle"]').value.trim(),
+        ciudad:       f.querySelector('[name="ciudad"]').value.trim(),
+        departamento: f.querySelector('[name="departamento"]').value.trim()
+      }
+    };
+    if (!datos.nombre || !datos.apellido || !datos.email || !datos.contrasena) {
+      showMsg('Completa todos los campos obligatorios.', 'error');
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+      return;
+    }
+  } else {
+    url = '/empresa';
+    datos = {
+      nit:           parseInt(f.querySelector('[name="nit"]').value) || null,
+      nombreEmpresa: f.querySelector('[name="nombreEmpresa"]').value.trim(),
+      correo:        f.querySelector('[name="correoEmpresa"]').value.trim(),
+      contrasena:    f.querySelector('[name="contrasenaEmpresa"]').value,
+      roles:         ["EMPRESA"],
+      enabled:       true,
+      direccion: {
+        calle:        f.querySelector('[name="calleEmpresa"]').value.trim(),
+        ciudad:       f.querySelector('[name="ciudadEmpresa"]').value.trim(),
+        departamento: f.querySelector('[name="departamentoEmpresa"]').value.trim()
+      }
+    };
+    if (!datos.nombreEmpresa || !datos.correo || !datos.contrasena) {
+      showMsg('Completa todos los campos obligatorios.', 'error');
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+      return;
+    }
+  }
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+
+    if (res.ok) {
+      showMsg('¡Registro exitoso! Redirigiendo al login...', 'ok');
+      setTimeout(() => window.location.href = '/login', 1500);
+    } else {
+      const err = await res.text();
+      showMsg('Error: ' + err, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+    }
+  } catch (err) {
+    showMsg('No se pudo conectar con el servidor.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Dashboard - CHAMBING</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styled.css}">
+  <style>
+    .badge-activa   { background:#16a34a; color:#fff; }
+    .badge-cerrada  { background:#dc2626; color:#fff; }
+    .badge-borrador { background:#6b7280; color:#fff; }
+    .apply-btn { min-width:110px; }
+    .propuesta-card { transition: box-shadow .2s; }
+    .propuesta-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); }
+  </style>
+</head>
+<body>
+<div class="d-flex" id="content-wrapper">
+
+  <!-- Sidebar -->
+  <div id="sidebar-container" class="bg-primary">
+    <div class="logo">
+      <a href="/user-dashboard" class="text-light font-weight-bold mb-0 h4">CHAMBING</a>
+    </div>
+    <div class="menu">
+      <a href="/companies-registers" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-apps lead mr-2"></i> Empresas
+      </a>
+      <a href="/only-proporsals" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-stats lead mr-2"></i> Propuestas
+      </a>
+      <a href="/proposals-states" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-paper lead mr-2"></i> Mis Postulaciones
+      </a>
+      <a href="/user-begin" class="d-block text-light p-3 border-0">
+        <i class="icon ion-md-person lead mr-2"></i> Perfil
+      </a>
+    </div>
+  </div>
+
+  <div class="w-100">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <div class="container">
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown"
+               role="button" data-toggle="dropdown">
+              <img th:src="@{/images/user-1.png}" class="rounded-circle" alt="avatar" width="35" height="35">
+              <span id="nombreNav">Configuración</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="/user-begin">Mi perfil</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="/logout">
+                <i class="fas fa-sign-out-alt mr-1"></i> Cerrar sesión
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Contenido -->
+    <div id="content" class="bg-grey w-100">
+
+      <section class="bg-light py-3">
+        <div class="container">
+          <h1 class="font-weight-bold mb-0">Bienvenido, <span id="bienvenidoNombre">...</span></h1>
+          <p class="lead text-muted">Revisa las últimas vacantes disponibles</p>
+        </div>
+      </section>
+
+      <section class="mt-3">
+        <div class="container">
+          <div class="row">
+
+            <!-- Vacantes: col-md-8 para que se ponga al lado desde 768px -->
+            <div class="col-md-8 my-3">
+              <div class="card rounded-0 propuesta-card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap" style="gap:8px">
+                  <div class="d-flex align-items-center" style="gap:12px">
+                    <h6 class="font-weight-bold mb-0">Últimas Vacantes</h6>
+                    <small class="text-muted" id="totalPropuestas"></small>
+                  </div>
+                  <div class="d-flex align-items-center" style="gap:8px">
+                    <a href="/only-proporsals" class="btn btn-outline-primary btn-sm">Ver todas →</a>
+                  </div>
+                </div>
+
+                <div class="card-body" id="propuestas-body">
+                  <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Cargando vacantes...</p>
+                  </div>
+                </div>
+
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center flex-wrap" style="gap:8px">
+                  <span id="pag-info-text" style="font-size:.82rem;color:#6b7280;"></span>
+                  <div id="pag-controls" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Resumen: col-md-4 para que quede al lado desde 768px -->
+            <div class="col-md-4 my-3">
+              <div class="card rounded-0">
+                <div class="card-header bg-light">
+                  <h6 class="font-weight-bold mb-0">Mi Resumen</h6>
+                </div>
+                <div class="card-body pt-2" id="resumen-body">
+                  <p class="text-muted small">Cargando...</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script>
+let usuarioActual = null;
+
+async function init() {
+  try {
+    const res = await fetch('/usuario/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    usuarioActual = await res.json();
+
+    document.getElementById('bienvenidoNombre').textContent = usuarioActual.nombre || '';
+    document.getElementById('nombreNav').textContent = (usuarioActual.nombre || 'Usuario');
+
+    await cargarPropuestas();
+    await cargarResumen();
+  } catch(e) {
+    window.location.href = '/login';
+  }
+}
+
+const PAGE_SIZE = 5;
+let todasPropuestas = [];
+let paginaActual = 1;
+
+async function cargarPropuestas() {
+  const container = document.getElementById('propuestas-body');
+  try {
+    const res = await fetch('/usuario/propuestas');
+    todasPropuestas = await res.json();
+    paginaActual = 1;
+    renderPropuestas();
+  } catch(e) {
+    container.innerHTML = "<p class='text-danger'>No se pudieron cargar las vacantes.</p>";
+  }
+}
+
+function renderPropuestas() {
+  const container = document.getElementById('propuestas-body');
+  const total = todasPropuestas.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const inicio = (paginaActual - 1) * PAGE_SIZE;
+  const fin = Math.min(inicio + PAGE_SIZE, total);
+  const pagina = todasPropuestas.slice(inicio, fin);
+
+  document.getElementById('totalPropuestas').textContent = total + ' vacantes';
+  document.getElementById('pag-info-text').textContent =
+    `Mostrando ${inicio + 1}–${fin} de ${total}`;
+
+  if (pagina.length === 0) {
+    container.innerHTML = "<p class='text-muted'>No hay vacantes disponibles por ahora.</p>";
+    renderPaginacion(0);
+    return;
+  }
+
+  container.innerHTML = pagina.map(p => {
+    const cerrada = (p.estado || '').toLowerCase() === 'cerrada';
+    return `
+      <div class="border-bottom pb-3 mb-3">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="font-weight-bold text-primary mb-1">${escHtml(p.titulo)}</h5>
+            <p class="text-muted small mb-1">
+              <i class="icon ion-md-business"></i> ${escHtml(p.empresaNombre || 'Empresa Confidencial')}
+              ${p.categoria ? ' &nbsp;|&nbsp; <i class="icon ion-md-pricetag"></i> ' + escHtml(p.categoria) : ''}
+            </p>
+          </div>
+          <span class="badge badge-activa ml-2">${escHtml(p.estado || 'Activa')}</span>
+        </div>
+        <p class="mb-1 small">${escHtml(p.descripcion || '')}</p>
+        <p class="mb-2"><small><strong>Requisitos:</strong> ${escHtml(p.requisitos || '')}</small></p>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="font-weight-bold text-success">$${Number(p.salario||0).toLocaleString('es-CO')}</span>
+          <button class="btn btn-sm ${cerrada ? 'btn-secondary' : 'btn-primary'}"
+            style="min-width:110px"
+            ${cerrada ? 'disabled' : `onclick="aplicarOferta('${p.idPropuesta}', this)"`}>
+            ${cerrada ? 'No disponible' : 'Aplicar Ahora'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  renderPaginacion(totalPages);
+}
+
+function renderPaginacion(totalPages) {
+  const ctrl = document.getElementById('pag-controls');
+  if (totalPages <= 1) { ctrl.innerHTML = ''; return; }
+
+  let html = '';
+  html += `<button class="btn btn-outline-secondary btn-sm"
+    ${paginaActual === 1 ? 'disabled' : ''}
+    onclick="irPagina(${paginaActual - 1})">‹ Anterior</button>`;
+
+  const maxVisible = 5;
+  let startPage = Math.max(1, paginaActual - Math.floor(maxVisible / 2));
+  let endPage   = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+  if (startPage > 1) html += `<button class="btn btn-outline-secondary btn-sm" onclick="irPagina(1)">1</button>`;
+  if (startPage > 2) html += `<span class="text-muted small px-1">…</span>`;
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `<button class="btn btn-sm ${i === paginaActual ? 'btn-primary' : 'btn-outline-secondary'}"
+      onclick="irPagina(${i})">${i}</button>`;
+  }
+
+  if (endPage < totalPages - 1) html += `<span class="text-muted small px-1">…</span>`;
+  if (endPage < totalPages) html += `<button class="btn btn-outline-secondary btn-sm" onclick="irPagina(${totalPages})">${totalPages}</button>`;
+
+  html += `<button class="btn btn-outline-secondary btn-sm"
+    ${paginaActual === totalPages ? 'disabled' : ''}
+    onclick="irPagina(${paginaActual + 1})">Siguiente ›</button>`;
+
+  ctrl.innerHTML = html;
+}
+
+function irPagina(n) {
+  paginaActual = n;
+  renderPropuestas();
+  document.querySelector('.propuesta-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function aplicarOferta(idPropuesta, btn) {
+  if (!usuarioActual) { window.location.href = '/login'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Aplicando...';
+  try {
+    const res = await fetch(`/usuario/aplicar/${usuarioActual.idUsuario}/${idPropuesta}`, { method: 'POST' });
+    if (res.ok) {
+      btn.textContent = '✓ Aplicado';
+      btn.classList.replace('btn-primary', 'btn-success');
+      await cargarResumen();
+    } else {
+      const msg = await res.text();
+      alert('Error: ' + msg);
+      btn.disabled = false;
+      btn.textContent = 'Aplicar Ahora';
+    }
+  } catch(e) {
+    alert('Error de conexión.');
+    btn.disabled = false;
+    btn.textContent = 'Aplicar Ahora';
+  }
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function cargarResumen() {
+  const container = document.getElementById('resumen-body');
+  try {
+    const res  = await fetch(`/usuario/postulaciones/${usuarioActual.idUsuario}`);
+    const list = await res.json();
+
+    const pendientes = list.filter(p => p.estadoPostulacion === 'Pendiente').length;
+    const aprobadas  = list.filter(p => p.estadoPostulacion === 'Aprobada').length;
+    const rechazadas = list.filter(p => p.estadoPostulacion === 'Rechazada').length;
+
+    container.innerHTML = `
+      <div class="d-flex justify-content-between border-bottom py-2">
+        <span>Total postulaciones</span><strong>${list.length}</strong>
+      </div>
+      <div class="d-flex justify-content-between border-bottom py-2">
+        <span>Pendientes</span><span class="badge badge-warning text-dark">${pendientes}</span>
+      </div>
+      <div class="d-flex justify-content-between border-bottom py-2">
+        <span>Aprobadas</span><span class="badge badge-success">${aprobadas}</span>
+      </div>
+      <div class="d-flex justify-content-between py-2">
+        <span>Rechazadas</span><span class="badge badge-danger">${rechazadas}</span>
+      </div>
+      <a href="/proposals-states" class="btn btn-outline-primary btn-sm btn-block mt-2">Ver todas</a>
+    `;
+  } catch(e) {
+    container.innerHTML = "<p class='text-muted small'>No se pudo cargar el resumen.</p>";
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
