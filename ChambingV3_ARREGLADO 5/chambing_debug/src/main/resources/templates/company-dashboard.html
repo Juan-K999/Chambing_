@@ -8,6 +8,44 @@
   <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/styled.css}">
+  <style>
+    /* ── Filtro por estado ── */
+    .filtro-estado {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      padding: .75rem 1.2rem;
+      border-bottom: 1px solid #e6e2ef;
+      background: #fff;
+    }
+    .filtro-estado .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .3rem .85rem;
+      border: 1.5px solid #e6e2ef;
+      border-radius: 999px;
+      background: #fff;
+      color: #6b6485;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .filtro-estado .chip:hover { border-color: #7b57b2; color: #4b208c; }
+    .filtro-estado .chip.active { background: #4b208c; border-color: #4b208c; color: #fff; }
+    .filtro-estado .chip:focus-visible { outline: 2px solid #4b208c; outline-offset: 2px; }
+    .chip-count {
+      min-width: 1.4rem;
+      padding: 0 .4rem;
+      border-radius: 999px;
+      background: #f3f0f6;
+      color: #4b208c;
+      font-size: .72rem;
+      text-align: center;
+    }
+    .chip.active .chip-count { background: rgba(255,255,255,.2); color: #fff; }
+  </style>
 </head>
 <body>
 <div class="d-flex" id="content-wrapper">
@@ -68,6 +106,12 @@
                   <h6 class="font-weight-bold mb-0">Mis Propuestas</h6>
                   <a href="/company-proposals" class="btn btn-primary btn-sm">+ Nueva Propuesta</a>
                 </div>
+                <div class="filtro-estado" id="filtroEstado" role="group" aria-label="Filtrar por estado">
+                  <button type="button" class="chip active" data-estado="">Todas <span class="chip-count" data-count=""></span></button>
+                  <button type="button" class="chip" data-estado="Activa">Activas <span class="chip-count" data-count="Activa"></span></button>
+                  <button type="button" class="chip" data-estado="Borrador">Borrador <span class="chip-count" data-count="Borrador"></span></button>
+                  <button type="button" class="chip" data-estado="Cerrada">Cerradas <span class="chip-count" data-count="Cerrada"></span></button>
+                </div>
                 <div class="card-body" id="propuestas-body">
                   <div class="text-center py-3">
                     <div class="spinner-border text-primary" role="status"></div>
@@ -122,6 +166,8 @@ async function init() {
 
 const PAGE_SIZE = 5;
 let todasPropuestas = [];
+let listaFiltrada   = [];
+let estadoFiltro    = '';   // '' = todas
 let paginaActual = 1;
 async function cargarPropuestas() {
   const container = document.getElementById('propuestas-body');
@@ -129,26 +175,54 @@ async function cargarPropuestas() {
     const res  = await fetch(`/empresa/${empresaActual.idEmpresa}/propuestas`);
     todasPropuestas = await res.json();
     paginaActual = 1;
-    renderPropuestas();
+    aplicarFiltroEstado();
     renderRecientes();
   } catch(e) {
     container.innerHTML = "<p class='text-danger'>No se pudieron cargar las propuestas.</p>";
   }
 }
 
+/* ── Filtro por estado ── */
+function aplicarFiltroEstado() {
+  const norm = s => (s || '').toLowerCase();
+  listaFiltrada = estadoFiltro
+    ? todasPropuestas.filter(p => norm(p.estado) === norm(estadoFiltro))
+    : todasPropuestas;
+
+  document.querySelectorAll('#filtroEstado .chip-count').forEach(el => {
+    const est = el.dataset.count;
+    el.textContent = est
+      ? todasPropuestas.filter(p => norm(p.estado) === norm(est)).length
+      : todasPropuestas.length;
+  });
+  renderPropuestas();
+}
+
+document.getElementById('filtroEstado').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('#filtroEstado .chip').forEach(c => c.classList.toggle('active', c === chip));
+  estadoFiltro = chip.dataset.estado;
+  paginaActual = 1;
+  aplicarFiltroEstado();
+});
+
 function renderPropuestas() {
   const container  = document.getElementById('propuestas-body');
-  const total      = todasPropuestas.length;
+  const total      = listaFiltrada.length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (paginaActual > totalPages) paginaActual = totalPages;
   const inicio     = (paginaActual - 1) * PAGE_SIZE;
   const fin        = Math.min(inicio + PAGE_SIZE, total);
-  const pagina     = todasPropuestas.slice(inicio, fin);
+  const pagina     = listaFiltrada.slice(inicio, fin);
 
   document.getElementById('pag-info-text').textContent =
     total === 0 ? '' : `Mostrando ${inicio + 1}–${fin} de ${total}`;
 
   if (pagina.length === 0) {
-    container.innerHTML = "<p class='text-muted'>No tienes propuestas aún. <a href='/company-proposals'>Publica una</a>.</p>";
+    container.innerHTML = todasPropuestas.length === 0
+      ? "<p class='text-muted'>No tienes propuestas aún. <a href='/company-proposals'>Publica una</a>.</p>"
+      : `<p class='text-muted'>No tienes propuestas en estado «${escHtml(estadoFiltro)}».</p>`;
     renderPaginacion(0);
     return;
   }

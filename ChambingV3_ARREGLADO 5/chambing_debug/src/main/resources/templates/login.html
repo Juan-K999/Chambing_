@@ -68,6 +68,31 @@
     }
 
     .btn-oauth svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    /* Logo "EMPLEO CARTAGENA" como botón para volver al index */
+    .logo-home {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 16px;
+      padding: 16px 12px;
+      transition: background .2s ease, transform .2s ease;
+    }
+    .logo-home:hover, .logo-home:focus-visible {
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,.1);
+      transform: translateY(-2px);
+    }
+    .logo-home:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .logo-home-hint {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .75;
+      transition: opacity .2s ease;
+    }
+    .logo-home:hover .logo-home-hint { opacity: 1; }
   </style>
 </head>
 <body class="login-body">
@@ -78,10 +103,11 @@
       <!-- Panel izquierdo (sin cambios) -->
       <div class="login-info">
         <div class="info-content">
-          <div class="logo-section">
+          <a href="/" class="logo-section logo-home" title="Volver al inicio">
             <img th:src="@{/images/logo.png}" alt="Logo" class="login-logo">
             <h1>EMPLEO CARTAGENA</h1>
-          </div>
+            <span class="logo-home-hint"><i class="fas fa-arrow-left"></i> Volver al inicio</span>
+          </a>
           <div class="info-text">
             <h2>Bienvenido de Vuelta</h2>
             <p>Accede a tu cuenta para explorar las mejores oportunidades laborales</p>

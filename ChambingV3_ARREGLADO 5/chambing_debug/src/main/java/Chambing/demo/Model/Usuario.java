@@ -24,7 +24,7 @@ public class Usuario implements UserDetails {
     // sparse = true: el índice ignora documentos donde "documento" es null.
     // Sin esto, MongoDB solo permite UN null → DuplicateKeyException al crear usuario OAuth2.
     @Indexed(unique = true, sparse = true)
-    private Integer documento;
+    private Long documento;
 
     private String tipoDocumento;
 
@@ -82,8 +82,8 @@ public class Usuario implements UserDetails {
     public String  getIdUsuario()                          { return idUsuario; }
     public void    setIdUsuario(String idUsuario)          { this.idUsuario = idUsuario; }
 
-    public Integer getDocumento()                          { return documento; }
-    public void    setDocumento(Integer documento)         { this.documento = documento; }
+    public Long    getDocumento()                          { return documento; }
+    public void    setDocumento(Long documento)            { this.documento = documento; }
 
     public String  getTipoDocumento()                      { return tipoDocumento; }
     public void    setTipoDocumento(String tipoDocumento)  { this.tipoDocumento = tipoDocumento; }

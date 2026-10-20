@@ -14,7 +14,7 @@ public interface EmpresaRepository extends MongoRepository<Empresa, String> {
 
     Optional<Empresa> findByCorreoAndContrasena(String correo, String contrasena);
 
-    Optional<Empresa> findByNit(Integer nit);
+    Optional<Empresa> findByNit(Long nit);
 
     Optional<Empresa> findByCorreo(String correo);
 

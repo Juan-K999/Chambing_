@@ -74,6 +74,41 @@
       align-items: center;
       gap: .5rem;
     }
+
+    /* ── Filtro de salario ── */
+    .salario-filtro { display: flex; align-items: center; gap: .4rem; }
+    .salario-label  { font-size: .82rem; font-weight: 600; color: #6b6485; }
+    .salario-sep    { color: #9ca3af; }
+    .salario-input {
+      display: flex;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #fff;
+      padding-left: .6rem;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .salario-input span { font-size: .82rem; color: #6b6485; }
+    .salario-input input {
+      width: 120px;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: .82rem;
+      padding: .38rem .6rem .38rem .3rem;
+    }
+    .salario-input:focus-within {
+      border-color: #4b208c;
+      box-shadow: 0 0 0 3px rgba(75,32,140,.12);
+    }
+    .salario-input.invalid { border-color: #dc2626; }
+
+    @media (max-width: 576px) {
+      .filtro-bar .search-input,
+      .salario-filtro { width: 100%; }
+      .salario-input  { flex: 1; }
+      .salario-input input { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -137,7 +172,24 @@
             <input type="text" id="searchCategoria" class="search-input"
                    placeholder="Categoría…"
                    oninput="onSearch()">
+            <div class="salario-filtro" role="group" aria-label="Filtrar por salario">
+              <span class="salario-label">Salario</span>
+              <div class="salario-input">
+                <span>$</span>
+                <input type="number" id="salarioMin" min="0" step="100000"
+                       placeholder="Mínimo" aria-label="Salario mínimo" oninput="onSearch()">
+              </div>
+              <span class="salario-sep">–</span>
+              <div class="salario-input">
+                <span>$</span>
+                <input type="number" id="salarioMax" min="0" step="100000"
+                       placeholder="Máximo" aria-label="Salario máximo" oninput="onSearch()">
+              </div>
+            </div>
             <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">Limpiar</button>
+            <small id="salarioError" class="text-danger w-100" style="display:none;">
+              El salario mínimo no puede ser mayor que el máximo.
+            </small>
           </div>
 
           <div class="col-lg-12 my-3 px-0">
@@ -215,20 +267,39 @@ function onSearch() {
   searchTimer = setTimeout(() => {
     const texto = document.getElementById('searchTexto').value.toLowerCase().trim();
     const cat   = document.getElementById('searchCategoria').value.toLowerCase().trim();
+    const minIn = document.getElementById('salarioMin');
+    const maxIn = document.getElementById('salarioMax');
+    const min   = minIn.value === '' ? null : Number(minIn.value);
+    const max   = maxIn.value === '' ? null : Number(maxIn.value);
 
-    listaFiltrada = todasPropuestas.filter(p =>
-      (!texto || (p.titulo||'').toLowerCase().includes(texto)
-               || (p.descripcion||'').toLowerCase().includes(texto)) &&
-      (!cat   || (p.categoria||'').toLowerCase().includes(cat))
-    );
+    const rangoInvalido = min !== null && max !== null && min > max;
+    mostrarErrorSalario(rangoInvalido);
+    if (rangoInvalido) return;
+
+    listaFiltrada = todasPropuestas.filter(p => {
+      const salario = Number(p.salario || 0);
+      return (!texto || (p.titulo||'').toLowerCase().includes(texto)
+                     || (p.descripcion||'').toLowerCase().includes(texto)) &&
+             (!cat   || (p.categoria||'').toLowerCase().includes(cat)) &&
+             (min === null || salario >= min) &&
+             (max === null || salario <= max);
+    });
     paginaActual = 0;
     renderPagina();
   }, 300);
 }
 
+function mostrarErrorSalario(mostrar) {
+  document.getElementById('salarioError').style.display = mostrar ? 'block' : 'none';
+  document.querySelectorAll('.salario-input').forEach(el => el.classList.toggle('invalid', mostrar));
+}
+
 function limpiarFiltros() {
   document.getElementById('searchTexto').value    = '';
   document.getElementById('searchCategoria').value = '';
+  document.getElementById('salarioMin').value     = '';
+  document.getElementById('salarioMax').value     = '';
+  mostrarErrorSalario(false);
   listaFiltrada = todasPropuestas;
   paginaActual  = 0;
   renderPagina();

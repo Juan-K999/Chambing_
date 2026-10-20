@@ -21,9 +21,9 @@ public class Empresa implements UserDetails {
     @Id
     private String idEmpresa;
 
-    // sparse=true: evita DuplicateKeyException cuando nit es null
+
     @Indexed(unique = true, sparse = true)
-    private Integer nit;
+    private Long nit;
 
     @NotBlank
     private String nombreEmpresa;
@@ -78,8 +78,8 @@ public class Empresa implements UserDetails {
     public String getIdEmpresa() { return idEmpresa; }
     public void setIdEmpresa(String idEmpresa) { this.idEmpresa = idEmpresa; }
 
-    public Integer getNit() { return nit; }
-    public void setNit(Integer nit) { this.nit = nit; }
+    public Long getNit() { return nit; }
+    public void setNit(Long nit) { this.nit = nit; }
 
     public String getNombreEmpresa() { return nombreEmpresa; }
     public void setNombreEmpresa(String nombreEmpresa) { this.nombreEmpresa = nombreEmpresa; }

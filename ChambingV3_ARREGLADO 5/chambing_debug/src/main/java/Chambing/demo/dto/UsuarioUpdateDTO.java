@@ -1,13 +1,33 @@
 package Chambing.demo.dto;
 
+import Chambing.demo.Model.Direccion;
+
 public class UsuarioUpdateDTO {
 
     private String nombre;
     private String apellido;
     private String email;
-    private Integer documento;
+    private Long documento;
     private Integer edad;
     private String contrasena;
+    private Boolean enabled;      // null = no cambiar
+    private Direccion direccion;  // null = no cambiar
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
 
     public String getNombre() {
         return nombre;
@@ -33,11 +53,11 @@ public class UsuarioUpdateDTO {
         this.email = email;
     }
 
-    public Integer getDocumento() {
+    public Long getDocumento() {
         return documento;
     }
 
-    public void setDocumento(Integer documento) {
+    public void setDocumento(Long documento) {
         this.documento = documento;
     }
 

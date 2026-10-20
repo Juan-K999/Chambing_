@@ -5,1120 +5,2100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Panel Administrador - Chambing</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ══════════════════════════════════════════════════════════
+       Tokens — misma paleta morada del resto de Chambing
+       ══════════════════════════════════════════════════════════ */
     :root {
-      --ch-dark: #0f172a;
-      --ch-blue: #0ea5e9;
-      --ch-blue-dark: #0284c7;
-      --ch-surface: #f8fafc;
-      --ch-border: #e2e8f0;
+      color-scheme: light;
+      --bg:           #f6f5f9;
+      --surface:      #ffffff;
+      --surface-2:    #f5f2fa;
+      --border:       #e7e3ef;
+      --text:         #1c1530;
+      --text-soft:    #6b6485;
+      --accent:       #4b208c;
+      --accent-hover: #5625a1;
+      --accent-fg:    #ffffff;
+      --accent-soft:  #efe9f8;
+      --sidebar:      #190734;
+      --sidebar-text: rgba(255,255,255,.72);
+      --success:      #15803d;  --success-soft: #dcfce7;
+      --danger:       #b91c1c;  --danger-soft:  #fee2e2;
+      --warning:      #b45309;  --warning-soft: #fef3c7;
+      --neutral-soft: #eef0f4;
+
+      --space-1: .25rem; --space-2: .5rem;  --space-3: .75rem;
+      --space-4: 1rem;   --space-6: 1.5rem; --space-8: 2rem;
+
+      --radius-sm: 8px;
+      --radius:    12px;
+      --radius-lg: 16px;
+      --shadow:    0 1px 2px rgba(25,7,52,.05), 0 4px 14px rgba(25,7,52,.05);
+      --shadow-lg: 0 20px 50px rgba(25,7,52,.18);
+      --sidebar-w: 248px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg:           #0f0c17;
+        --surface:      #17131f;
+        --surface-2:    #1f1a2b;
+        --border:       #2b2538;
+        --text:         #ece9f3;
+        --text-soft:    #a39cb8;
+        --accent:       #a48ae6;
+        --accent-hover: #b9a3ee;
+        --accent-fg:    #140d22;
+        --accent-soft:  #2a2140;
+        --sidebar:      #120d1d;
+        --success:      #4ade80;  --success-soft: rgba(74,222,128,.12);
+        --danger:       #f87171;  --danger-soft:  rgba(248,113,113,.12);
+        --warning:      #fbbf24;  --warning-soft: rgba(251,191,36,.12);
+        --neutral-soft: rgba(255,255,255,.07);
+        --shadow:    0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+        --shadow-lg: 0 20px 50px rgba(0,0,0,.6);
+      }
     }
 
-    body { background: var(--ch-surface); font-family: 'Segoe UI', system-ui, sans-serif; }
+    /* ── Base ── */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    button { font-family: inherit; }
 
-    .topbar {
-      background: var(--ch-dark);
-      padding: .6rem 1.5rem;
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ══════════════════════════════════════════════════════════
+       Sidebar
+       ══════════════════════════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--sidebar);
+      color: #fff;
       display: flex;
-      align-items: center;
-      gap: 1rem;
+      flex-direction: column;
       position: sticky;
       top: 0;
-      z-index: 1000;
+      height: 100vh;
+      padding: var(--space-6) var(--space-4);
     }
-    .brand-chip {
-      background: var(--ch-blue);
-      color: #fff;
-      padding: .3rem .8rem;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: .85rem;
-      letter-spacing: .8px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 0 var(--space-2) var(--space-6);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: var(--space-4);
     }
-    .topbar-title { color: #94a3b8; font-size: .9rem; }
-    .btn-refresh {
-      margin-left: auto;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.12);
-      color: #cbd5e1;
-      font-size: .8rem;
-      padding: .3rem .8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background .15s;
+    .brand-mark {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #7b57b2, #4b208c);
+      display: grid; place-items: center;
+      font-weight: 700; font-size: 1rem;
     }
-    .btn-refresh:hover { background: rgba(255,255,255,.14); color: #fff; }
+    .brand-name  { font-weight: 700; letter-spacing: .5px; line-height: 1.1; }
+    .brand-sub   { font-size: .75rem; color: var(--sidebar-text); }
 
-    .main-wrap { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1.2rem; }
-
-    .nav-pills { gap: .4rem; }
-    .nav-pills .nav-link {
-      color: #64748b;
-      font-size: .85rem;
-      padding: .4rem 1rem;
-      border-radius: 8px;
-      border: 1px solid transparent;
-      transition: all .15s;
-    }
-    .nav-pills .nav-link:hover { background: #e2e8f0; color: #0f172a; }
-    .nav-pills .nav-link.active {
-      background: var(--ch-dark);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .panel-card {
-      background: #fff;
-      border-radius: 14px;
-      border: 1px solid var(--ch-border);
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 1px 4px rgba(15,23,42,.06);
-    }
-    .panel-card h4 { font-size: 1rem; font-weight: 700; color: var(--ch-dark); margin: 0; }
-
-    .table { font-size: .85rem; }
-    .table thead th {
-      background: #f1f5f9;
-      color: #475569;
-      font-weight: 600;
-      font-size: .78rem;
+    .nav-group-label {
+      font-size: .7rem;
       text-transform: uppercase;
-      letter-spacing: .04em;
-      border-bottom: 1px solid var(--ch-border);
-      padding: .7rem 1rem;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,.4);
+      padding: var(--space-3) var(--space-3) var(--space-2);
     }
-    .table tbody td { padding: .75rem 1rem; vertical-align: middle; color: #334155; }
-    .table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background .1s; }
-    .table tbody tr:hover { background: #f8fafc; }
-    .truncate { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .btn-primary-ch {
-      background: var(--ch-blue); color: #fff; border: none;
-      font-size: .8rem; padding: .35rem .85rem; border-radius: 7px;
-      transition: background .15s; cursor: pointer;
+    .side-nav { display: flex; flex-direction: column; gap: 2px; }
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      width: 100%;
+      min-height: 42px;
+      padding: 0 var(--space-3);
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--sidebar-text);
+      font-size: .9rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: background .15s, color .15s;
     }
-    .btn-primary-ch:hover { background: var(--ch-blue-dark); }
-    .btn-ghost-ch {
-      background: #f1f5f9; color: #475569; border: none;
-      font-size: .8rem; padding: .35rem .85rem; border-radius: 7px;
-      transition: background .15s; cursor: pointer;
-    }
-    .btn-ghost-ch:hover { background: #e2e8f0; color: #0f172a; }
-    .btn-danger-ch {
-      background: #fee2e2; color: #b91c1c; border: none;
-      font-size: .8rem; padding: .35rem .85rem; border-radius: 7px;
-      transition: background .15s; cursor: pointer;
-    }
-    .btn-danger-ch:hover { background: #fecaca; }
-
-    .badge-status {
-      display: inline-block;
-      padding: .2rem .65rem;
-      border-radius: 999px;
-      font-size: .75rem;
+    .side-link i { font-size: 1.05rem; width: 20px; text-align: center; }
+    .side-link:hover { background: rgba(255,255,255,.06); color: #fff; }
+    .side-link.active { background: rgba(255,255,255,.12); color: #fff; }
+    .side-link .count {
+      margin-left: auto;
+      font-size: .72rem;
       font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.8);
     }
-    .badge-enabled  { background: #dcfce7; color: #15803d; }
-    .badge-disabled { background: #fee2e2; color: #b91c1c; }
-    .badge-neutral  { background: #e2e8f0; color: #475569; }
-    .badge-blue     { background: #dbeafe; color: #1d4ed8; }
+    .side-link.active .count { background: #fff; color: #190734; }
 
-    /* ── Paginación ── */
-    .pag-wrap {
+    .sidebar-footer { margin-top: auto; padding-top: var(--space-4); border-top: 1px solid rgba(255,255,255,.08); }
+
+    /* ══════════════════════════════════════════════════════════
+       Main
+       ══════════════════════════════════════════════════════════ */
+    .main { flex: 1; min-width: 0; padding: var(--space-8) clamp(1rem, 3vw, 2.5rem); }
+    .main-inner { max-width: 1240px; margin: 0 auto; }
+
+    .page-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+    }
+    .page-head h1 { font-size: 1.6rem; font-weight: 700; margin: 0; letter-spacing: -.02em; }
+    .page-head p  { margin: var(--space-1) 0 0; color: var(--text-soft); font-size: .9rem; }
+    .head-actions { display: flex; gap: var(--space-2); }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-6) var(--space-4) var(--space-4);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: left;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .15s, border-color .15s;
+    }
+    .stat:hover  { transform: translateY(-2px); border-color: var(--accent); }
+    .stat.active { border-color: var(--accent); }
+    .stat-icon {
+      width: 44px; height: 44px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+    .stat-value, .stat-label { display: block; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+    .stat-label { font-size: .8rem; color: var(--text-soft); }
+
+    /* ── Card / toolbar ── */
+    .card-x {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: .75rem 0 0;
+      gap: var(--space-3);
       flex-wrap: wrap;
-      gap: .5rem;
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--border);
     }
-    .pag-info { font-size: .78rem; color: #64748b; }
-    .pag-btns { display: flex; gap: .3rem; flex-wrap: wrap; }
-    .pag-btn {
-      min-width: 32px;
-      height: 32px;
-      padding: 0 .55rem;
-      border-radius: 7px;
-      border: 1px solid var(--ch-border);
-      background: #fff;
-      color: #334155;
-      font-size: .78rem;
+    .toolbar-title { font-weight: 600; font-size: .95rem; }
+    .toolbar-meta  { font-size: .8rem; color: var(--text-soft); margin-left: var(--space-2); font-weight: 400; }
+
+    .search {
+      position: relative;
+      width: min(320px, 100%);
+    }
+    .search i.bi-search {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-soft);
+      pointer-events: none;
+    }
+    .search input {
+      width: 100%;
+      height: 40px;
+      padding: 0 36px 0 36px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: .875rem;
+      transition: border-color .15s, box-shadow .15s, background .15s;
+    }
+    .search input::placeholder { color: var(--text-soft); }
+    .search input:focus {
+      outline: none;
+      background: var(--surface);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .search .clear {
+      position: absolute;
+      right: 6px; top: 50%;
+      transform: translateY(-50%);
+      width: 28px; height: 28px;
+      border: 0; border-radius: 6px;
+      background: transparent;
+      color: var(--text-soft);
+      display: none;
       cursor: pointer;
-      transition: all .12s;
+    }
+    .search .clear:hover { background: var(--neutral-soft); color: var(--text); }
+    .search.has-value .clear { display: grid; place-items: center; }
+
+    /* ── Tabla ── */
+    .table-wrap { overflow-x: auto; }
+    table.data { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    table.data th {
+      position: sticky; top: 0;
+      background: var(--surface-2);
+      color: var(--text-soft);
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      text-align: left;
+      padding: var(--space-3) var(--space-6);
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+    table.data td {
+      padding: var(--space-3) var(--space-6);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    table.data tbody tr:last-child td { border-bottom: 0; }
+    table.data tbody tr { transition: background .1s; }
+    table.data tbody tr:hover { background: var(--surface-2); }
+    table.data .end { text-align: right; white-space: nowrap; }
+    .truncate { max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .muted { color: var(--text-soft); }
+    .num   { font-variant-numeric: tabular-nums; }
+
+    .cell-main { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+    .avatar {
+      width: 36px; height: 36px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: .8rem;
+    }
+    .avatar.square { border-radius: 10px; }
+    .cell-title { font-weight: 600; line-height: 1.25; }
+    .cell-sub   { font-size: .8rem; color: var(--text-soft); }
+
+    .id-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1px 6px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--neutral-soft);
+      color: var(--text-soft);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .7rem;
+      cursor: pointer;
+    }
+    .id-chip:hover { color: var(--accent); }
+
+    /* ── Badges ── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .pill.no-dot::before { display: none; }
+    .pill-success { background: var(--success-soft); color: var(--success); }
+    .pill-danger  { background: var(--danger-soft);  color: var(--danger); }
+    .pill-warning { background: var(--warning-soft); color: var(--warning); }
+    .pill-neutral { background: var(--neutral-soft); color: var(--text-soft); }
+    .pill-accent  { background: var(--accent-soft);  color: var(--accent); }
+
+    /* ── Botones ── */
+    .btn-x {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-    }
-    .pag-btn:hover:not(:disabled) { background: #f1f5f9; border-color: #cbd5e1; }
-    .pag-btn.active {
-      background: var(--ch-dark);
-      color: #fff;
-      border-color: var(--ch-dark);
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-4);
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: .875rem;
       font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+      white-space: nowrap;
     }
-    .pag-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-x:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-primary-x { background: var(--accent); color: var(--accent-fg); }
+    .btn-primary-x:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-ghost-x { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .btn-ghost-x:hover:not(:disabled) { background: var(--surface-2); }
+    .btn-danger-x { background: var(--danger); color: #fff; }
+    .btn-danger-x:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-side {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      color: var(--sidebar-text);
+      justify-content: flex-start;
+    }
+    .btn-side:hover { background: rgba(248,113,113,.15); color: #fecaca; }
 
-    /* Buscador */
-    .search-input {
-      font-size: .82rem;
-      border-radius: 8px;
-      border: 1px solid var(--ch-border);
-      padding: .38rem .75rem;
-      width: 220px;
-      transition: border-color .15s, box-shadow .15s;
+    .icon-btn {
+      width: 34px; height: 34px;
+      display: inline-grid; place-items: center;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-soft);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .15s, color .15s;
     }
-    .search-input:focus {
-      outline: none;
-      border-color: var(--ch-blue);
-      box-shadow: 0 0 0 3px rgba(14,165,233,.12);
+    .icon-btn:hover        { background: var(--accent-soft); color: var(--accent); }
+    .icon-btn.danger:hover { background: var(--danger-soft); color: var(--danger); }
+
+    .estado-select {
+      height: 32px;
+      padding: 0 28px 0 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background-color: var(--surface);
+      color: var(--text);
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    .modal-content { border-radius: 16px; border: none; box-shadow: 0 20px 60px rgba(15,23,42,.18); }
-    .modal-header { border-bottom: 1px solid #f1f5f9; padding: 1.2rem 1.5rem; }
-    .modal-footer { border-top: 1px solid #f1f5f9; padding: .9rem 1.5rem; }
-    .modal-title { font-size: .95rem; font-weight: 700; color: var(--ch-dark); }
-    .form-label { font-size: .8rem; font-weight: 600; color: #475569; margin-bottom: .3rem; }
+    /* ── Estados vacío / carga ── */
+    .state-row td { padding: 3.5rem 1rem !important; text-align: center; }
+    .state-icon {
+      width: 52px; height: 52px;
+      margin: 0 auto var(--space-3);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 1.4rem;
+    }
+    .state-title { font-weight: 600; }
+    .state-sub   { font-size: .85rem; color: var(--text-soft); }
+
+    .skeleton {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--neutral-soft) 25%, var(--surface-2) 50%, var(--neutral-soft) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+    /* ── Paginación ── */
+    .pager {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      padding: var(--space-3) var(--space-6);
+      border-top: 1px solid var(--border);
+      font-size: .8rem;
+      color: var(--text-soft);
+    }
+    .pager:empty { display: none; }
+    .pager-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+    .pg {
+      min-width: 34px; height: 34px;
+      padding: 0 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .8rem;
+      cursor: pointer;
+    }
+    .pg:hover:not(:disabled) { background: var(--surface-2); }
+    .pg.active { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
+    .pg:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── Modales ── */
+    .modal-content {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-header, .modal-footer { border-color: var(--border); padding: var(--space-4) var(--space-6); }
+    .modal-body  { padding: var(--space-6); }
+    .modal-title { font-size: 1.05rem; font-weight: 700; }
+    .modal-sub   { font-size: .8rem; color: var(--text-soft); margin: 2px 0 0; }
+    .form-section {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-soft);
+      font-weight: 600;
+      padding-top: var(--space-2);
+      border-top: 1px dashed var(--border);
+    }
+    .form-label { font-size: .8rem; font-weight: 600; color: var(--text); margin-bottom: var(--space-1); }
     .form-control, .form-select {
-      font-size: .85rem;
-      border-radius: 8px;
-      border: 1px solid var(--ch-border);
-      padding: .45rem .75rem;
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .9rem;
+      min-height: 40px;
     }
     .form-control:focus, .form-select:focus {
-      border-color: var(--ch-blue);
-      box-shadow: 0 0 0 3px rgba(14,165,233,.12);
+      background-color: var(--surface);
+      color: var(--text);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
-    .form-control:disabled { background: #f8fafc; color: #94a3b8; }
+    .form-text { color: var(--text-soft); font-size: .75rem; }
 
-    .empty-row td {
-      text-align: center;
-      padding: 2.5rem !important;
-      color: #94a3b8;
-      font-size: .85rem;
+    .confirm-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-size: 1.3rem;
+      margin-bottom: var(--space-3);
     }
 
-    #toast-container {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      z-index: 9999;
+    /* ══════════════════════════════════════════════════════════
+       Estadísticas — gráficas
+       ══════════════════════════════════════════════════════════ */
+    :root {
+      --viz-bar:   #4b208c;   /* serie única: el morado de la marca */
+      --viz-grid:  #ece8f3;
+      --viz-axis:  #d6d0e2;
+      --viz-muted: #898781;
+      --st-good:   #0ca30c;
+      --st-warn:   #fab219;
+      --st-crit:   #d03b3b;
+      --st-neutral:#a8a3b5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --viz-bar:   #a48ae6;
+        --viz-grid:  #2b2538;
+        --viz-axis:  #3a3349;
+        --st-neutral:#6f6883;
+      }
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .kpi {
+      padding: var(--space-4) var(--space-6);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .kpi-label { font-size: .8rem; color: var(--text-soft); }
+    .kpi-value { font-size: 1.75rem; font-weight: 600; line-height: 1.2; margin: var(--space-1) 0; }
+    .kpi-sub   { font-size: .78rem; color: var(--text-soft); }
+
+    .viz-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+    .viz-card {
       display: flex;
       flex-direction: column;
-      gap: .5rem;
+      padding: var(--space-6);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      min-width: 0;
     }
-    .toast-msg {
-      background: var(--ch-dark);
-      color: #f1f5f9;
-      font-size: .83rem;
-      padding: .65rem 1.1rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0,0,0,.25);
-      animation: slideUp .2s ease;
-      max-width: 320px;
+    .viz-card.wide { grid-column: 1 / -1; }
+    .viz-card h3 { font-size: .95rem; font-weight: 600; margin: 0; }
+    .viz-card .viz-sub { font-size: .8rem; color: var(--text-soft); margin: 2px 0 var(--space-6); }
+    .viz-body { flex: 1; }
+
+    .viz-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: var(--space-2);
+      min-height: 160px;
+      color: var(--text-soft);
+      font-size: .85rem;
     }
-    .toast-msg.err { background: #7f1d1d; }
-    @keyframes slideUp {
-      from { transform: translateY(10px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
+    .viz-empty i { font-size: 1.6rem; opacity: .6; }
+
+    /* Barras horizontales */
+    .hbars { display: flex; flex-direction: column; gap: 2px; }
+    .hbar-row {
+      display: grid;
+      grid-template-columns: minmax(90px, 34%) 1fr auto;
+      align-items: center;
+      gap: var(--space-3);
+      min-height: 32px;
+      padding: 0 var(--space-2);
+      border-radius: 6px;
+      cursor: default;
+    }
+    .hbar-row:hover { background: var(--surface-2); }
+    .hbar-label { font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hbar-track { display: block; height: 14px; }
+    .hbar-fill {
+      display: block;
+      height: 100%;
+      min-width: 3px;
+      background: var(--viz-bar);
+      border-radius: 0 4px 4px 0;
+      transition: opacity .15s;
+    }
+    .hbars:hover .hbar-row:not(:hover) .hbar-fill { opacity: .45; }
+    .hbar-value { font-size: .82rem; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 2ch; text-align: right; }
+
+    /* Columnas */
+    .cols { display: flex; flex-direction: column; gap: var(--space-2); }
+    .cols-plot { position: relative; height: 200px; margin-left: 40px; }
+    .grid-line {
+      position: absolute; left: 0; right: 0;
+      border-top: 1px solid var(--viz-grid);
+    }
+    .grid-line.base { border-top-color: var(--viz-axis); }
+    .grid-line span {
+      position: absolute; right: calc(100% + 8px); top: -.6em;
+      font-size: .72rem; color: var(--viz-muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .cols-bars { position: absolute; inset: 0; display: flex; }
+    .col-slot {
+      position: relative;
+      flex: 1;
+      display: flex; align-items: flex-end; justify-content: center;
+      border-radius: 6px;
+    }
+    .col-slot:hover { background: var(--surface-2); }
+    .col-bar {
+      width: min(24px, 60%);
+      min-height: 2px;
+      background: var(--viz-bar);
+      border-radius: 4px 4px 0 0;
+      transition: opacity .15s;
+    }
+    .cols-bars:hover .col-slot:not(:hover) .col-bar { opacity: .45; }
+    .col-val {
+      position: absolute; left: 0; right: 0;
+      text-align: center;
+      font-size: .75rem; font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .cols-x { display: flex; margin-left: 40px; }
+    .cols-x span { flex: 1; text-align: center; font-size: .75rem; color: var(--text-soft); }
+
+    /* Barra apilada 100% (estados) */
+    .stack {
+      display: flex;
+      gap: 2px;
+      height: 20px;
+      background: var(--surface);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .stack .seg { min-width: 4px; transition: opacity .15s; }
+    .stack:hover .seg:not(:hover) { opacity: .45; }
+    .legend { list-style: none; margin: var(--space-6) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+    .legend li {
+      display: grid;
+      grid-template-columns: 20px 1fr auto 48px;
+      align-items: center;
+      gap: var(--space-2);
+      min-height: 32px;
+      padding: 0 var(--space-2);
+      border-radius: 6px;
+      font-size: .85rem;
+    }
+    .legend li:hover { background: var(--surface-2); }
+    .legend .lg-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .legend .lg-pct { color: var(--text-soft); font-variant-numeric: tabular-nums; text-align: right; }
+
+    /* Tabla de datos */
+    .viz-table { margin-top: var(--space-4); font-size: .8rem; }
+    .viz-table summary {
+      cursor: pointer;
+      color: var(--text-soft);
+      width: max-content;
+      border-radius: 4px;
+    }
+    .viz-table summary:hover { color: var(--accent); }
+    .viz-table table { width: 100%; margin-top: var(--space-2); border-collapse: collapse; }
+    .viz-table th, .viz-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+    .viz-table th { color: var(--text-soft); font-weight: 600; }
+    .viz-table td.n, .viz-table th.n { text-align: right; font-variant-numeric: tabular-nums; }
+
+    /* Tooltip */
+    .viz-tip {
+      position: fixed;
+      z-index: 3000;
+      pointer-events: none;
+      max-width: 260px;
+      padding: 6px 10px;
+      background: var(--text);
+      color: var(--surface);
+      border-radius: 8px;
+      font-size: .8rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
     }
 
-    .loading-row td {
-      text-align: center;
-      padding: 2rem !important;
-      color: #94a3b8;
-      font-size: .85rem;
+    @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 860px)  { .viz-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 520px)  {
+      .kpis { gap: var(--space-2); }
+      .kpi  { padding: var(--space-3) var(--space-4); }
+      .kpi-value { font-size: 1.35rem; }
+      .viz-card { padding: var(--space-4); }
+    }
+
+    /* ── Toasts ── */
+    #toast-container {
+      position: fixed;
+      right: var(--space-6);
+      bottom: var(--space-6);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .toast-x {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-width: 260px;
+      max-width: 360px;
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--success);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      font-size: .875rem;
+      animation: toastIn .2s ease;
+    }
+    .toast-x i { color: var(--success); font-size: 1.1rem; }
+    .toast-x.err { border-left-color: var(--danger); }
+    .toast-x.err i { color: var(--danger); }
+    @keyframes toastIn { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    /* ══════════════════════════════════════════════════════════
+       Responsive
+       ══════════════════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 860px) {
+      .layout  { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        z-index: 100;
+        padding: var(--space-3) var(--space-4);
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-3);
+      }
+      .brand { border: 0; padding: 0; margin: 0; }
+      .brand-sub, .nav-group-label { display: none; }
+      .side-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        flex: 1;
+        min-width: 0;   /* sin esto la lista ensancha toda la página en celular */
+        scrollbar-width: none;
+      }
+      .side-nav::-webkit-scrollbar { display: none; }
+      .side-link { width: auto; white-space: nowrap; }
+      .sidebar-footer { margin: 0; padding: 0; border: 0; }
+      .btn-side span { display: none; }
+      .main { padding: var(--space-6) var(--space-4); }
+      .toolbar, .pager { padding-left: var(--space-4); padding-right: var(--space-4); }
+      table.data th, table.data td { padding-left: var(--space-4); padding-right: var(--space-4); }
+    }
+    @media (max-width: 520px) {
+      .stats { grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+      .stat  { padding: var(--space-3); gap: var(--space-3); }
+      .stat-icon { width: 36px; height: 36px; font-size: 1rem; }
+    .stat-value { font-size: 1.2rem; }
+      .head-actions .btn-x span { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
 
 <body>
+<div class="layout">
 
-  <div class="topbar">
-    <span class="brand-chip">CHAMBING</span>
-    <span class="topbar-title">Panel Administrador</span>
-    <button class="btn-refresh" onclick="refreshActiveTab()">↻ Refrescar</button>
-  </div>
-
-  <div class="main-wrap">
-
-    <ul class="nav nav-pills mb-3" id="adminTabs">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tabUsuarios"      onclick="initTab('usuarios')">Usuarios</button></li>
-      <li class="nav-item"><button class="nav-link"        data-bs-toggle="pill" data-bs-target="#tabEmpresas"      onclick="initTab('empresas')">Empresas</button></li>
-      <li class="nav-item"><button class="nav-link"        data-bs-toggle="pill" data-bs-target="#tabPropuestas"    onclick="initTab('propuestas')">Propuestas</button></li>
-      <li class="nav-item"><button class="nav-link"        data-bs-toggle="pill" data-bs-target="#tabPostulaciones" onclick="initTab('postulaciones')">Postulaciones</button></li>
-      <li class="nav-item"><button class="nav-link"        data-bs-toggle="pill" data-bs-target="#tabGeneros"       onclick="initTab('generos')">Géneros</button></li>
-      <li class="nav-item"><button class="nav-link"        data-bs-toggle="pill" data-bs-target="#tabTiposDoc"      onclick="initTab('tiposDoc')">Tipos Documento</button></li>
-    </ul>
-
-    <div class="tab-content">
-
-      <!-- USUARIOS -->
-      <div class="tab-pane fade show active" id="tabUsuarios">
-        <div class="panel-card">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-            <h4>Usuarios</h4>
-            <input class="search-input" id="searchUsuarios" placeholder="Buscar…" oninput="onSearch('usuarios')">
-          </div>
-          <div class="table-responsive">
-            <table class="table" id="tablaUsuarios"></table>
-          </div>
-          <div class="pag-wrap" id="pagUsuarios"></div>
-        </div>
+  <!-- ═══════════ Sidebar ═══════════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">C</div>
+      <div>
+        <div class="brand-name">CHAMBING</div>
+        <div class="brand-sub">Panel administrador</div>
       </div>
+    </div>
 
-      <!-- EMPRESAS -->
-      <div class="tab-pane fade" id="tabEmpresas">
-        <div class="panel-card">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-            <h4>Empresas</h4>
-            <input class="search-input" id="searchEmpresas" placeholder="Buscar…" oninput="onSearch('empresas')">
-          </div>
-          <div class="table-responsive">
-            <table class="table" id="tablaEmpresas"></table>
-          </div>
-          <div class="pag-wrap" id="pagEmpresas"></div>
-        </div>
-      </div>
+    <nav class="side-nav" id="sideNav" aria-label="Secciones">
+      <div class="nav-group-label">Análisis</div>
+      <button class="side-link" data-section="estadisticas"><i class="bi bi-bar-chart-line"></i>Estadísticas</button>
+      <div class="nav-group-label">Gestión</div>
+      <button class="side-link" data-section="usuarios"><i class="bi bi-people"></i>Usuarios<span class="count" id="countUsuarios">—</span></button>
+      <button class="side-link" data-section="empresas"><i class="bi bi-buildings"></i>Empresas<span class="count" id="countEmpresas">—</span></button>
+      <button class="side-link" data-section="propuestas"><i class="bi bi-briefcase"></i>Propuestas<span class="count" id="countPropuestas">—</span></button>
+      <button class="side-link" data-section="postulaciones"><i class="bi bi-send-check"></i>Postulaciones<span class="count" id="countPostulaciones">—</span></button>
+      <div class="nav-group-label">Catálogos</div>
+      <button class="side-link" data-section="generos"><i class="bi bi-gender-ambiguous"></i>Géneros<span class="count" id="countGeneros">—</span></button>
+      <button class="side-link" data-section="tiposDoc"><i class="bi bi-person-vcard"></i>Tipos de documento<span class="count" id="countTiposDoc">—</span></button>
+    </nav>
 
-      <!-- PROPUESTAS -->
-      <div class="tab-pane fade" id="tabPropuestas">
-        <div class="panel-card">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-            <h4>Propuestas</h4>
-            <input class="search-input" id="searchPropuestas" placeholder="Buscar…" oninput="onSearch('propuestas')">
-          </div>
-          <div class="table-responsive">
-            <table class="table" id="tablaPropuestas"></table>
-          </div>
-          <div class="pag-wrap" id="pagPropuestas"></div>
-        </div>
-      </div>
+    <div class="sidebar-footer">
+      <button class="btn-x btn-side" onclick="cerrarSesion()" title="Cerrar sesión">
+        <i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
 
-      <!-- POSTULACIONES -->
-      <div class="tab-pane fade" id="tabPostulaciones">
-        <div class="panel-card">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-            <h4>Postulaciones</h4>
-            <input class="search-input" id="searchPostulaciones" placeholder="Buscar…" oninput="onSearch('postulaciones')">
-          </div>
-          <div class="table-responsive">
-            <table class="table" id="tablaPostulaciones"></table>
-          </div>
-          <div class="pag-wrap" id="pagPostulaciones"></div>
-        </div>
-      </div>
+  <!-- ═══════════ Main ═══════════ -->
+  <main class="main">
+    <div class="main-inner">
 
-      <!-- GÉNEROS -->
-      <div class="tab-pane fade" id="tabGeneros">
-        <div class="panel-card">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-            <h4>Géneros</h4>
-            <div class="d-flex gap-2">
-              <input class="search-input" id="searchGeneros" placeholder="Buscar…" oninput="onSearch('generos')">
-              <button class="btn-primary-ch" onclick="openGeneroModal()">+ Nuevo</button>
-            </div>
-          </div>
-          <div class="table-responsive">
-            <table class="table" id="tablaGeneros"></table>
-          </div>
-          <div class="pag-wrap" id="pagGeneros"></div>
+      <header class="page-head">
+        <div>
+          <h1 id="pageTitle">Usuarios</h1>
+          <p id="pageSub">Personas registradas que buscan empleo.</p>
         </div>
-      </div>
+        <div class="head-actions">
+          <button class="btn-x btn-ghost-x" onclick="refreshActive()" title="Refrescar">
+            <i class="bi bi-arrow-clockwise"></i><span>Refrescar</span>
+          </button>
+          <button class="btn-x btn-primary-x" id="btnNuevo" onclick="nuevoActivo()" hidden>
+            <i class="bi bi-plus-lg"></i><span>Nuevo</span>
+          </button>
+        </div>
+      </header>
 
-      <!-- TIPOS DOCUMENTO -->
-      <div class="tab-pane fade" id="tabTiposDoc">
-        <div class="panel-card">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-            <h4>Tipos de Documento</h4>
-            <div class="d-flex gap-2">
-              <input class="search-input" id="searchTiposDoc" placeholder="Buscar…" oninput="onSearch('tiposDoc')">
-              <button class="btn-primary-ch" onclick="openTipoDocModal()">+ Nuevo</button>
-            </div>
+      <section class="stats" aria-label="Resumen">
+        <button class="stat" data-section="usuarios">
+          <span class="stat-icon"><i class="bi bi-people"></i></span>
+          <span><span class="stat-value" id="statUsuarios">—</span><span class="stat-label">Usuarios</span></span>
+        </button>
+        <button class="stat" data-section="empresas">
+          <span class="stat-icon"><i class="bi bi-buildings"></i></span>
+          <span><span class="stat-value" id="statEmpresas">—</span><span class="stat-label">Empresas</span></span>
+        </button>
+        <button class="stat" data-section="propuestas">
+          <span class="stat-icon"><i class="bi bi-briefcase"></i></span>
+          <span><span class="stat-value" id="statPropuestas">—</span><span class="stat-label">Propuestas</span></span>
+        </button>
+        <button class="stat" data-section="postulaciones">
+          <span class="stat-icon"><i class="bi bi-send-check"></i></span>
+          <span><span class="stat-value" id="statPostulaciones">—</span><span class="stat-label">Postulaciones</span></span>
+        </button>
+      </section>
+
+      <section id="statsView" aria-label="Estadísticas" hidden></section>
+
+      <section class="card-x" id="tableView">
+        <div class="toolbar">
+          <div class="toolbar-title"><span id="listTitle">Usuarios</span><span class="toolbar-meta" id="listMeta"></span></div>
+          <div class="search" id="searchBox">
+            <i class="bi bi-search"></i>
+            <input id="searchInput" type="search" placeholder="Buscar…" autocomplete="off" aria-label="Buscar">
+            <button class="clear" type="button" onclick="limpiarBusqueda()" aria-label="Limpiar búsqueda"><i class="bi bi-x-lg"></i></button>
           </div>
-          <div class="table-responsive">
-            <table class="table" id="tablaTiposDoc"></table>
-          </div>
-          <div class="pag-wrap" id="pagTiposDoc"></div>
         </div>
-      </div>
+        <div class="table-wrap">
+          <table class="data" id="dataTable"></table>
+        </div>
+        <div class="pager" id="pager"></div>
+      </section>
 
     </div>
-  </div>
+  </main>
+</div>
 
-  <!-- Modal Usuario -->
-  <div class="modal fade" id="modalUsuario" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar Usuario</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="u_id">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="form-label">Nombre</label><input class="form-control" id="u_nombre"></div>
-            <div class="col-md-6"><label class="form-label">Apellido</label><input class="form-control" id="u_apellido"></div>
-            <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" id="u_email" type="email"></div>
-            <div class="col-md-3"><label class="form-label">Documento</label><input class="form-control" id="u_documento" type="number"></div>
-            <div class="col-md-3"><label class="form-label">Edad</label><input class="form-control" id="u_edad" type="number"></div>
-            <div class="col-md-6"><label class="form-label">Contraseña</label><input class="form-control" id="u_contrasena" type="text"></div>
-            <div class="col-md-6">
-              <label class="form-label">Habilitado</label>
-              <select class="form-select" id="u_enabled">
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-            <div class="col-12"><hr class="my-1"><small class="text-muted">Dirección</small></div>
-            <div class="col-md-4"><label class="form-label">Calle</label><input class="form-control" id="u_calle"></div>
-            <div class="col-md-4"><label class="form-label">Ciudad</label><input class="form-control" id="u_ciudad"></div>
-            <div class="col-md-4"><label class="form-label">Departamento</label><input class="form-control" id="u_departamento"></div>
-            <div class="col-12"><small class="text-muted">* Tipo de documento, género y roles no editables desde este panel.</small></div>
+<!-- ═══════════ Modal Usuario ═══════════ -->
+<div class="modal fade" id="modalUsuario" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Editar usuario</h5><p class="modal-sub">Actualiza los datos personales y de acceso.</p></div>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="u_id">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label" for="u_nombre">Nombre</label><input class="form-control" id="u_nombre"></div>
+          <div class="col-md-6"><label class="form-label" for="u_apellido">Apellido</label><input class="form-control" id="u_apellido"></div>
+          <div class="col-md-6"><label class="form-label" for="u_email">Email</label><input class="form-control" id="u_email" type="email"></div>
+          <div class="col-md-3"><label class="form-label" for="u_documento">Documento</label><input class="form-control" id="u_documento" type="number"></div>
+          <div class="col-md-3"><label class="form-label" for="u_edad">Edad</label><input class="form-control" id="u_edad" type="number" min="18"></div>
+          <div class="col-md-6">
+            <label class="form-label" for="u_contrasena">Nueva contraseña</label>
+            <input class="form-control" id="u_contrasena" type="password" autocomplete="new-password" placeholder="Dejar vacío para no cambiar">
           </div>
+          <div class="col-md-6">
+            <label class="form-label" for="u_enabled">Estado de la cuenta</label>
+            <select class="form-select" id="u_enabled"><option value="true">Activa</option><option value="false">Inactiva</option></select>
+          </div>
+          <div class="col-12 form-section">Dirección</div>
+          <div class="col-md-4"><label class="form-label" for="u_calle">Calle</label><input class="form-control" id="u_calle"></div>
+          <div class="col-md-4"><label class="form-label" for="u_ciudad">Ciudad</label><input class="form-control" id="u_ciudad"></div>
+          <div class="col-md-4"><label class="form-label" for="u_departamento">Departamento</label><input class="form-control" id="u_departamento"></div>
+          <div class="col-12"><span class="form-text"><i class="bi bi-info-circle"></i> Tipo de documento, género y roles no se editan desde este panel.</span></div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-ghost-ch" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-primary-ch" onclick="guardarUsuario()">Guardar cambios</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-x btn-ghost-x" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-x btn-primary-x" onclick="guardarUsuario(this)">Guardar cambios</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal Empresa -->
-  <div class="modal fade" id="modalEmpresa" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar Empresa</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="e_id">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="form-label">Nombre empresa</label><input class="form-control" id="e_nombreEmpresa"></div>
-            <div class="col-md-6"><label class="form-label">Correo</label><input class="form-control" id="e_correo" type="email"></div>
-            <div class="col-md-4"><label class="form-label">NIT</label><input class="form-control" id="e_nit" type="number"></div>
-            <div class="col-md-4"><label class="form-label">Contraseña</label><input class="form-control" id="e_contrasena" type="text"></div>
-            <div class="col-md-4">
-              <label class="form-label">Habilitada</label>
-              <select class="form-select" id="e_enabled">
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-            <div class="col-12"><hr class="my-1"><small class="text-muted">Dirección</small></div>
-            <div class="col-md-4"><label class="form-label">Calle</label><input class="form-control" id="e_calle"></div>
-            <div class="col-md-4"><label class="form-label">Ciudad</label><input class="form-control" id="e_ciudad"></div>
-            <div class="col-md-4"><label class="form-label">Departamento</label><input class="form-control" id="e_departamento"></div>
+<!-- ═══════════ Modal Empresa ═══════════ -->
+<div class="modal fade" id="modalEmpresa" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Editar empresa</h5><p class="modal-sub">Datos corporativos y de acceso.</p></div>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="e_id">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label" for="e_nombreEmpresa">Nombre de la empresa</label><input class="form-control" id="e_nombreEmpresa"></div>
+          <div class="col-md-6"><label class="form-label" for="e_correo">Correo</label><input class="form-control" id="e_correo" type="email"></div>
+          <div class="col-md-4"><label class="form-label" for="e_nit">NIT</label><input class="form-control" id="e_nit" type="number"></div>
+          <div class="col-md-4">
+            <label class="form-label" for="e_contrasena">Nueva contraseña</label>
+            <input class="form-control" id="e_contrasena" type="password" autocomplete="new-password" placeholder="Dejar vacío para no cambiar">
           </div>
+          <div class="col-md-4">
+            <label class="form-label" for="e_enabled">Estado de la cuenta</label>
+            <select class="form-select" id="e_enabled"><option value="true">Activa</option><option value="false">Inactiva</option></select>
+          </div>
+          <div class="col-12 form-section">Dirección</div>
+          <div class="col-md-4"><label class="form-label" for="e_calle">Calle</label><input class="form-control" id="e_calle"></div>
+          <div class="col-md-4"><label class="form-label" for="e_ciudad">Ciudad</label><input class="form-control" id="e_ciudad"></div>
+          <div class="col-md-4"><label class="form-label" for="e_departamento">Departamento</label><input class="form-control" id="e_departamento"></div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-ghost-ch" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-primary-ch" onclick="guardarEmpresa()">Guardar cambios</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-x btn-ghost-x" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-x btn-primary-x" onclick="guardarEmpresa(this)">Guardar cambios</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal Propuesta -->
-  <div class="modal fade" id="modalPropuesta" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar Propuesta</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="p_id">
-          <div class="row g-3">
-            <div class="col-md-8"><label class="form-label">Título</label><input class="form-control" id="p_titulo"></div>
-            <div class="col-md-4"><label class="form-label">Salario</label><input class="form-control" id="p_salario" type="number"></div>
-            <div class="col-md-6"><label class="form-label">Categoría</label><input class="form-control" id="p_categoria"></div>
-            <div class="col-md-6"><label class="form-label">Estado</label><input class="form-control" id="p_estado"></div>
-            <div class="col-md-12"><label class="form-label">Descripción</label><textarea class="form-control" id="p_descripcion" rows="3"></textarea></div>
-            <div class="col-md-12"><label class="form-label">Requisitos</label><textarea class="form-control" id="p_requisitos" rows="3"></textarea></div>
-            <div class="col-12"><small class="text-muted">* Empresa no editable desde este panel.</small></div>
+<!-- ═══════════ Modal Propuesta ═══════════ -->
+<div class="modal fade" id="modalPropuesta" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Editar propuesta</h5><p class="modal-sub" id="p_empresaInfo"></p></div>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="p_id">
+        <div class="row g-3">
+          <div class="col-md-8"><label class="form-label" for="p_titulo">Título</label><input class="form-control" id="p_titulo"></div>
+          <div class="col-md-4"><label class="form-label" for="p_salario">Salario mensual</label><input class="form-control" id="p_salario" type="number" min="0"></div>
+          <div class="col-md-6">
+            <label class="form-label" for="p_categoria">Categoría</label>
+            <input class="form-control" id="p_categoria" list="categoriasList">
+            <datalist id="categoriasList">
+              <option value="Tecnología y Desarrollo"><option value="Marketing Digital">
+              <option value="Recursos Humanos"><option value="Administración y Finanzas">
+            </datalist>
           </div>
+          <div class="col-md-6">
+            <label class="form-label" for="p_estado">Estado</label>
+            <select class="form-select" id="p_estado">
+              <option value="Activa">Activa (visible)</option>
+              <option value="Borrador">Borrador (no visible)</option>
+              <option value="Cerrada">Cerrada</option>
+            </select>
+          </div>
+          <div class="col-12"><label class="form-label" for="p_descripcion">Descripción</label><textarea class="form-control" id="p_descripcion" rows="3"></textarea></div>
+          <div class="col-12"><label class="form-label" for="p_requisitos">Requisitos</label><textarea class="form-control" id="p_requisitos" rows="3"></textarea></div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-ghost-ch" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-primary-ch" onclick="guardarPropuesta()">Guardar cambios</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-x btn-ghost-x" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-x btn-primary-x" onclick="guardarPropuesta(this)">Guardar cambios</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal Género -->
-  <div class="modal fade" id="modalGenero" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalGeneroTitle">Nuevo Género</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="g_id">
-          <div class="row g-3">
-            <div class="col-12"><label class="form-label">Nombre <span class="text-danger">*</span></label><input class="form-control" id="g_nombre" placeholder="Ej: Masculino"></div>
-            <div class="col-12"><label class="form-label">Descripción</label><input class="form-control" id="g_descripcion" placeholder="Descripción opcional"></div>
-            <div class="col-12">
-              <label class="form-label">Activo</label>
-              <select class="form-select" id="g_activo">
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
+<!-- ═══════════ Modal Género ═══════════ -->
+<div class="modal fade" id="modalGenero" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalGeneroTitle">Nuevo género</h5>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="g_id">
+        <div class="row g-3">
+          <div class="col-12"><label class="form-label" for="g_nombre">Nombre <span class="text-danger">*</span></label><input class="form-control" id="g_nombre" placeholder="Ej: Masculino"></div>
+          <div class="col-12"><label class="form-label" for="g_descripcion">Descripción</label><input class="form-control" id="g_descripcion" placeholder="Opcional"></div>
+          <div class="col-12">
+            <label class="form-label" for="g_activo">Estado</label>
+            <select class="form-select" id="g_activo"><option value="true">Activo</option><option value="false">Inactivo</option></select>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-ghost-ch" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-primary-ch" onclick="guardarGenero()">Guardar</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-x btn-ghost-x" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-x btn-primary-x" onclick="guardarGenero(this)">Guardar</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal Tipo Documento -->
-  <div class="modal fade" id="modalTipoDoc" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalTipoDocTitle">Nuevo Tipo de Documento</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="td_id">
-          <div class="row g-3">
-            <div class="col-md-4"><label class="form-label">Código <span class="text-danger">*</span></label><input class="form-control" id="td_codigo" placeholder="Ej: CC" maxlength="10"></div>
-            <div class="col-md-8"><label class="form-label">Nombre <span class="text-danger">*</span></label><input class="form-control" id="td_nombre" placeholder="Ej: Cédula de Ciudadanía"></div>
-            <div class="col-12"><label class="form-label">Descripción</label><input class="form-control" id="td_descripcion" placeholder="Descripción opcional"></div>
-            <div class="col-12">
-              <label class="form-label">Activo</label>
-              <select class="form-select" id="td_activo">
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
+<!-- ═══════════ Modal Tipo Documento ═══════════ -->
+<div class="modal fade" id="modalTipoDoc" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTipoDocTitle">Nuevo tipo de documento</h5>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="td_id">
+        <div class="row g-3">
+          <div class="col-md-4"><label class="form-label" for="td_codigo">Código <span class="text-danger">*</span></label><input class="form-control" id="td_codigo" placeholder="Ej: CC" maxlength="10"></div>
+          <div class="col-md-8"><label class="form-label" for="td_nombre">Nombre <span class="text-danger">*</span></label><input class="form-control" id="td_nombre" placeholder="Ej: Cédula de Ciudadanía"></div>
+          <div class="col-12"><label class="form-label" for="td_descripcion">Descripción</label><input class="form-control" id="td_descripcion" placeholder="Opcional"></div>
+          <div class="col-12">
+            <label class="form-label" for="td_activo">Estado</label>
+            <select class="form-select" id="td_activo"><option value="true">Activo</option><option value="false">Inactivo</option></select>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-ghost-ch" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-primary-ch" onclick="guardarTipoDoc()">Guardar</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-x btn-ghost-x" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-x btn-primary-x" onclick="guardarTipoDoc(this)">Guardar</button>
       </div>
     </div>
   </div>
+</div>
 
-  <div id="toast-container"></div>
+<!-- ═══════════ Modal Confirmación ═══════════ -->
+<div class="modal fade" id="modalConfirm" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="confirm-icon"><i class="bi bi-trash3"></i></div>
+        <h5 class="modal-title" id="confirmTitle">¿Eliminar?</h5>
+        <p class="muted mb-0 mt-1" style="font-size:.875rem" id="confirmText">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-x btn-ghost-x" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-x btn-danger-x" id="confirmOk">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+<div id="toast-container" aria-live="polite"></div>
 
-    const API       = "/admin";
-    const PAGE_SIZE = 10;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── Tema: Bootstrap sigue la preferencia del sistema ── */
+  (function () {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => document.documentElement.setAttribute('data-bs-theme', mq.matches ? 'dark' : 'light');
+    apply();
+    mq.addEventListener('change', apply);
+  })();
 
-    // ── state: original 4 + 2 nuevas ──
-    const state = {
-      usuarios:      { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false },
-      empresas:      { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false },
-      propuestas:    { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false },
-      postulaciones: { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false },
-      generos:       { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false },
-      tiposDoc:      { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false },
-    };
+  const API       = "/admin";
+  const PAGE_SIZE = 10;
 
-    const ID_CANDIDATES = ["_id","objectId","idUsuario","idEmpresa","idPropuesta","idPostulacion","id"];
-    function getId(obj) {
-      for (const k of ID_CANDIDATES) {
-        if (obj[k] != null) return String(obj[k]);
+  /* ══════════════════════════════════════════════════════════
+     Configuración por sección
+     ══════════════════════════════════════════════════════════ */
+  const SECTIONS = {
+    usuarios: {
+      title: "Usuarios", sub: "Personas registradas que buscan empleo.",
+      endpoint: `${API}/usuarios`, search: "Buscar por nombre, apellido o email…",
+      headers: ["Usuario", "Documento", "Edad", "Estado", ""],
+      row: rowUsuario, empty: "No hay usuarios registrados.", icon: "bi-people",
+    },
+    empresas: {
+      title: "Empresas", sub: "Compañías que publican ofertas laborales.",
+      endpoint: `${API}/empresas`, search: "Buscar por nombre o correo…",
+      headers: ["Empresa", "NIT", "Ciudad", "Estado", ""],
+      row: rowEmpresa, empty: "No hay empresas registradas.", icon: "bi-buildings",
+    },
+    propuestas: {
+      title: "Propuestas", sub: "Ofertas laborales publicadas por las empresas.",
+      endpoint: `${API}/propuestas`, search: "Buscar por título o categoría…",
+      headers: ["Propuesta", "Categoría", "Salario", "Estado", ""],
+      row: rowPropuesta, empty: "No hay propuestas publicadas.", icon: "bi-briefcase",
+    },
+    postulaciones: {
+      title: "Postulaciones", sub: "Candidatos que aplicaron a una propuesta. Cambia el estado directamente en la tabla.",
+      endpoint: `${API}/postulaciones`, search: null,
+      headers: ["Candidato", "Propuesta", "Fecha", "Estado", ""],
+      row: rowPostulacion, empty: "Aún no hay postulaciones.", icon: "bi-send-check",
+    },
+    generos: {
+      title: "Géneros", sub: "Opciones de género disponibles en el registro.",
+      endpoint: `${API}/generos`, search: "Buscar género…",
+      headers: ["Nombre", "Descripción", "Estado", ""],
+      row: rowGenero, empty: "No hay géneros creados.", icon: "bi-gender-ambiguous",
+      onNew: () => openGeneroModal(),
+    },
+    tiposDoc: {
+      title: "Tipos de documento", sub: "Documentos de identidad aceptados en el registro.",
+      endpoint: `${API}/tipos-documento`, search: "Buscar por código o nombre…",
+      headers: ["Código", "Nombre", "Descripción", "Estado", ""],
+      row: rowTipoDoc, empty: "No hay tipos de documento creados.", icon: "bi-person-vcard",
+      onNew: () => openTipoDocModal(),
+    },
+  };
+
+  const state = {};
+  Object.keys(SECTIONS).forEach(k => state[k] = { cache: [], page: 0, totalPages: 1, totalElements: 0, q: "", loaded: false });
+  let active = "usuarios";
+
+  /* ══════════════════════════════════════════════════════════
+     Helpers
+     ══════════════════════════════════════════════════════════ */
+  const $ = id => document.getElementById(id);
+  const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  // Escapa HTML para evitar inyección de código desde los datos
+  function h(v, fallback = "—") {
+    if (v === null || v === undefined || v === "") return fallback;
+    return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  // Para pasar un valor como string JS dentro de un atributo onclick="fn('…')"
+  const jsArg = id => h(String(id).replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
+
+  const ID_CANDIDATES = ["_id","objectId","idUsuario","idEmpresa","idPropuesta","idPostulacion","id"];
+  function getId(obj) {
+    for (const k of ID_CANDIDATES) if (obj[k] != null) return String(obj[k]);
+    const found = Object.keys(obj).find(k => k.toLowerCase().includes("id"));
+    return found ? String(obj[found]) : null;
+  }
+  const findById = (cache, id) => cache.find(x => getId(x) === id) ?? null;
+
+  function initials(...parts) {
+    const s = parts.filter(Boolean).join(" ").trim();
+    if (!s) return "?";
+    const w = s.split(/\s+/);
+    return ((w[0][0] || "") + (w[1]?.[0] || "")).toUpperCase();
+  }
+
+  function idChip(id) {
+    if (!id) return "";
+    const short = id.length > 8 ? "…" + id.slice(-6) : id;
+    return `<button class="id-chip" title="Copiar ID: ${h(id)}" onclick="copiarId('${jsArg(id)}')"><i class="bi bi-hash"></i>${h(short)}</button>`;
+  }
+  function copiarId(id) {
+    navigator.clipboard?.writeText(id).then(() => toast("ID copiado al portapapeles"));
+  }
+
+  const fmtMoney = n => "$ " + Number(n ?? 0).toLocaleString("es-CO");
+  // LocalDateTime puede llegar como ISO "2026-10-20T19:50:48", como {$date} o como [2026,10,20,19,50]
+  function parseFecha(v) {
+    const raw = v?.$date ?? v;
+    if (!raw) return null;
+    const d = Array.isArray(raw) ? new Date(raw[0], (raw[1] ?? 1) - 1, raw[2] ?? 1, raw[3] ?? 0, raw[4] ?? 0) : new Date(raw);
+    return isNaN(d) ? null : d;
+  }
+  function fmtDate(v) {
+    const d = parseFecha(v);
+    return d ? d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+  }
+
+  function pillActivo(val, on = "Activo", off = "Inactivo") {
+    return val ? `<span class="pill pill-success">${on}</span>` : `<span class="pill pill-danger">${off}</span>`;
+  }
+  function pillEstadoPropuesta(e) {
+    const cls = { activa: "pill-success", cerrada: "pill-danger", borrador: "pill-neutral" }[String(e ?? "").toLowerCase()] ?? "pill-accent";
+    return `<span class="pill ${cls}">${h(e)}</span>`;
+  }
+
+  function toast(msg, isErr = false) {
+    const d = document.createElement("div");
+    d.className = "toast-x" + (isErr ? " err" : "");
+    d.innerHTML = `<i class="bi ${isErr ? "bi-exclamation-circle-fill" : "bi-check-circle-fill"}"></i><span></span>`;
+    d.querySelector("span").textContent = msg;
+    $("toast-container").appendChild(d);
+    setTimeout(() => d.remove(), 3500);
+  }
+
+  function confirmar(titulo, texto, okLabel = "Eliminar") {
+    return new Promise(resolve => {
+      $("confirmTitle").textContent = titulo;
+      $("confirmText").textContent  = texto;
+      $("confirmOk").textContent    = okLabel;
+      const el    = $("modalConfirm");
+      const modal = bootstrap.Modal.getOrCreateInstance(el);
+      let ok = false;
+      $("confirmOk").onclick = () => { ok = true; modal.hide(); };
+      el.addEventListener("hidden.bs.modal", () => resolve(ok), { once: true });
+      modal.show();
+    });
+  }
+
+  async function withBusy(btn, fn) {
+    const prev = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`; }
+    try { await fn(); } finally { if (btn) { btn.disabled = false; btn.innerHTML = prev; } }
+  }
+
+  async function errorText(res) {
+    const t = await res.text().catch(() => "");
+    return `Error ${res.status}${t ? ": " + t : ""}`;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Navegación entre secciones
+     ══════════════════════════════════════════════════════════ */
+  function setSection(section) {
+    active = section;
+
+    document.querySelectorAll("[data-section]").forEach(el =>
+      el.classList.toggle("active", el.dataset.section === section));
+
+    try { localStorage.setItem("chambing-admin-section", section); } catch (e) {}
+
+    const esStats = section === "estadisticas";
+    $("statsView").hidden = !esStats;
+    $("tableView").hidden = esStats;
+    if (esStats) {
+      $("pageTitle").textContent = "Estadísticas";
+      $("pageSub").textContent   = "Resumen de la actividad de la plataforma.";
+      $("btnNuevo").hidden       = true;
+      loadStatsView();
+      return;
+    }
+
+    const cfg = SECTIONS[section];
+    $("pageTitle").textContent = cfg.title;
+    $("pageSub").textContent   = cfg.sub;
+    $("listTitle").textContent = cfg.title;
+    $("btnNuevo").hidden       = !cfg.onNew;
+
+    const box = $("searchBox"), input = $("searchInput");
+    box.hidden        = !cfg.search;
+    input.placeholder = cfg.search || "";
+    input.value       = state[section].q;
+    box.classList.toggle("has-value", !!input.value);
+
+    if (state[section].loaded) { renderSection(); renderPagination(); }
+    else fetchSection(section);
+  }
+
+  function refreshActive() {
+    if (active === "estadisticas") loadStatsView(true);
+    else fetchSection(active);
+    loadStats();
+  }
+  function nuevoActivo() { SECTIONS[active]?.onNew?.(); }
+
+  /* ── Búsqueda ── */
+  let searchTimer;
+  $("searchInput").addEventListener("input", e => {
+    $("searchBox").classList.toggle("has-value", !!e.target.value);
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      state[active].q    = e.target.value.trim();
+      state[active].page = 0;
+      fetchSection(active);
+    }, 300);
+  });
+  function limpiarBusqueda() {
+    $("searchInput").value = "";
+    $("searchBox").classList.remove("has-value");
+    state[active].q = ""; state[active].page = 0;
+    fetchSection(active);
+    $("searchInput").focus();
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Carga de datos
+     ══════════════════════════════════════════════════════════ */
+  async function fetchSection(section) {
+    const s = state[section];
+    if (section === active) renderLoading();
+
+    const params = new URLSearchParams({ page: s.page, size: PAGE_SIZE, ...(s.q ? { q: s.q } : {}) });
+
+    try {
+      const res = await fetch(`${SECTIONS[section].endpoint}?${params}`);
+      if (res.status === 401 || res.status === 403) { window.location.href = "/admin"; return; }
+      if (!res.ok) { toast(await errorText(res), true); renderError(); return; }
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        s.totalElements = data.length;
+        s.totalPages    = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
+        s.cache         = data.slice(s.page * PAGE_SIZE, (s.page + 1) * PAGE_SIZE);
+      } else {
+        s.cache         = data.content ?? [];
+        s.totalElements = data.totalElements ?? s.cache.length;
+        s.totalPages    = Math.max(1, data.totalPages ?? 1);
+        s.page          = data.number ?? s.page;
       }
-      const found = Object.keys(obj).find(k => k.toLowerCase().includes("id"));
-      return found ? String(obj[found]) : null;
+      s.loaded = true;
+      if (!s.q) setCount(section, s.totalElements);
+
+      if (section === active) { renderSection(); renderPagination(); }
+    } catch (e) {
+      toast(`Error cargando ${SECTIONS[section].title.toLowerCase()}: ${e.message}`, true);
+      if (section === active) renderError();
     }
-    function findById(cache, id) { return cache.find(x => getId(x) === id) ?? null; }
-    function esc(id) { return String(id).replace(/'/g, "\\'"); }
-    function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+  }
 
-    function toast(msg, isErr = false) {
-      const c = document.getElementById("toast-container");
-      const d = document.createElement("div");
-      d.className = "toast-msg" + (isErr ? " err" : "");
-      d.textContent = msg;
-      c.appendChild(d);
-      setTimeout(() => d.remove(), 3500);
-    }
+  function setCount(section, n) {
+    const c = $(`count${capitalize(section)}`);
+    if (c) c.textContent = n;
+    const st = $(`stat${capitalize(section)}`);
+    if (st) st.textContent = Number(n).toLocaleString("es-CO");
+  }
 
-    function badgeEnabled(val) {
-      return val
-        ? `<span class="badge-status badge-enabled">Activo</span>`
-        : `<span class="badge-status badge-disabled">Inactivo</span>`;
-    }
-    function emptyRow(cols, msg = "Sin resultados.") {
-      return `<tr class="empty-row"><td colspan="${cols}">${msg}</td></tr>`;
-    }
-    function loadingRow(cols) {
-      return `<tr class="loading-row"><td colspan="${cols}">Cargando…</td></tr>`;
-    }
-
-    function renderPagination(section) {
-      const s      = state[section];
-      const pages  = s.totalPages;
-      const total  = s.totalElements;
-      const cur    = s.page;
-
-      const from = total === 0 ? 0 : cur * PAGE_SIZE + 1;
-      const to   = Math.min((cur + 1) * PAGE_SIZE, total);
-      const info = `Mostrando ${from}–${to} de ${total}`;
-
-      const MAX_VISIBLE = 7;
-      const half   = Math.floor(MAX_VISIBLE / 2);
-      let pStart   = Math.max(0, cur - half);
-      let pEnd     = Math.min(pages - 1, pStart + MAX_VISIBLE - 1);
-      if (pEnd - pStart < MAX_VISIBLE - 1) pStart = Math.max(0, pEnd - MAX_VISIBLE + 1);
-
-      let btns = "";
-      btns += `<button class="pag-btn" onclick="goPage('${section}',${cur - 1})" ${cur === 0 ? "disabled" : ""}>‹</button>`;
-
-      if (pStart > 0) {
-        btns += `<button class="pag-btn" onclick="goPage('${section}',0)">1</button>`;
-        if (pStart > 1) btns += `<button class="pag-btn" disabled>…</button>`;
-      }
-      for (let i = pStart; i <= pEnd; i++) {
-        btns += `<button class="pag-btn ${i === cur ? 'active' : ''}" onclick="goPage('${section}',${i})">${i + 1}</button>`;
-      }
-      if (pEnd < pages - 1) {
-        if (pEnd < pages - 2) btns += `<button class="pag-btn" disabled>…</button>`;
-        btns += `<button class="pag-btn" onclick="goPage('${section}',${pages - 1})">${pages}</button>`;
-      }
-
-      btns += `<button class="pag-btn" onclick="goPage('${section}',${cur + 1})" ${cur >= pages - 1 ? "disabled" : ""}>›</button>`;
-
-      document.getElementById(`pag${capitalize(section)}`).innerHTML =
-        `<span class="pag-info">${info}</span><div class="pag-btns">${btns}</div>`;
-    }
-
-    function goPage(section, page) {
-      const s = state[section];
-      page = Math.max(0, Math.min(page, s.totalPages - 1));
-      if (page === s.page) return;
-      s.page = page;
-      fetchSection(section);
-    }
-
-    const searchTimers = {};
-    function onSearch(section) {
-      clearTimeout(searchTimers[section]);
-      searchTimers[section] = setTimeout(() => {
-        const q = document.getElementById(`search${capitalize(section)}`).value.trim();
-        state[section].q    = q;
-        state[section].page = 0;
-        fetchSection(section);
-      }, 300);
-    }
-
-    function initTab(section) {
-      if (!state[section].loaded) fetchSection(section);
-    }
-
-    function refreshActiveTab() {
-      const active = document.querySelector("#adminTabs .nav-link.active");
-      if (!active) return;
-      const map = {
-        "#tabUsuarios":      "usuarios",
-        "#tabEmpresas":      "empresas",
-        "#tabPropuestas":    "propuestas",
-        "#tabPostulaciones": "postulaciones",
-        "#tabGeneros":       "generos",
-        "#tabTiposDoc":      "tiposDoc",
-      };
-      const section = map[active.getAttribute("data-bs-target")];
-      if (section) fetchSection(section);
-    }
-
-    const BASE_ENDPOINTS = {
-      usuarios:      `${API}/usuarios`,
-      empresas:      `${API}/empresas`,
-      propuestas:    `${API}/propuestas`,
-      postulaciones: `${API}/postulaciones`,
-      generos:       `${API}/generos`,
-      tiposDoc:      `${API}/tipos-documento`,
-    };
-
-    // ── fetchSection: igual al original, sin cambios ──
-    async function fetchSection(section) {
-      const s = state[section];
-      renderLoading(section);
-
-      const params = new URLSearchParams({
-        page: s.page,
-        size: PAGE_SIZE,
-        ...(s.q ? { q: s.q } : {}),
-      });
-
+  // Totales de todas las secciones (piden 1 solo registro, sólo para leer totalElements)
+  function loadStats() {
+    Object.entries(SECTIONS).forEach(async ([key, cfg]) => {
       try {
-        const res = await fetch(`${BASE_ENDPOINTS[section]}?${params}`);
-        if (!res.ok) { toast(`Error ${res.status}: ${await res.text()}`, true); return; }
+        const res = await fetch(`${cfg.endpoint}?page=0&size=1`);
+        if (!res.ok) return;
         const data = await res.json();
+        setCount(key, Array.isArray(data) ? data.length : (data.totalElements ?? 0));
+      } catch (e) {}
+    });
+  }
 
-        if (Array.isArray(data)) {
-          s.cache         = data;
-          s.totalElements = data.length;
-          s.totalPages    = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
-          const slice = data.slice(s.page * PAGE_SIZE, (s.page + 1) * PAGE_SIZE);
-          s.cache = slice;
-          s._fullList = data;
-        } else {
-          s.cache         = data.content ?? [];
-          s.totalElements = data.totalElements ?? s.cache.length;
-          s.totalPages    = data.totalPages    ?? 1;
-          s.page          = data.number        ?? s.page;
-        }
+  /* ══════════════════════════════════════════════════════════
+     Render
+     ══════════════════════════════════════════════════════════ */
+  function theadHTML() {
+    const ths = SECTIONS[active].headers.map(t => `<th${t === "" ? ' class="end"' : ""}>${t}</th>`).join("");
+    return `<thead><tr>${ths}</tr></thead>`;
+  }
 
-        s.loaded = true;
-        renderSection(section);
-        renderPagination(section);
+  function renderLoading() {
+    const cols = SECTIONS[active].headers.length;
+    const row  = `<tr>${Array.from({ length: cols }, (_, i) =>
+      `<td><div class="skeleton" style="width:${i === 0 ? 70 : 45}%"></div></td>`).join("")}</tr>`;
+    $("dataTable").innerHTML = theadHTML() + `<tbody>${row.repeat(5)}</tbody>`;
+    $("pager").innerHTML = "";
+    $("listMeta").textContent = "";
+  }
 
-      } catch(e) {
-        toast(`Error cargando ${section}: ${e.message}`, true);
-      }
+  function stateRow(icon, title, sub) {
+    const cols = SECTIONS[active].headers.length;
+    return `<tr class="state-row"><td colspan="${cols}">
+      <div class="state-icon"><i class="bi ${icon}"></i></div>
+      <div class="state-title">${title}</div>
+      ${sub ? `<div class="state-sub">${sub}</div>` : ""}
+    </td></tr>`;
+  }
+
+  function renderError() {
+    $("dataTable").innerHTML = theadHTML() +
+      `<tbody>${stateRow("bi-wifi-off", "No se pudo cargar la información", "Revisa la conexión y pulsa «Refrescar».")}</tbody>`;
+  }
+
+  function renderSection() {
+    const s = state[active], cfg = SECTIONS[active];
+    const body = s.cache.length
+      ? s.cache.map(item => cfg.row(item, getId(item))).join("")
+      : s.q
+        ? stateRow("bi-search", "Sin resultados", `No encontramos coincidencias para «${h(s.q)}».`)
+        : stateRow(cfg.icon, cfg.empty, cfg.onNew ? "Crea el primero con el botón «Nuevo»." : "");
+    $("dataTable").innerHTML = theadHTML() + `<tbody>${body}</tbody>`;
+    $("listMeta").textContent = `· ${s.totalElements.toLocaleString("es-CO")} ${s.q ? "resultados" : "en total"}`;
+  }
+
+  function renderPagination() {
+    const s = state[active];
+    const pages = s.totalPages, total = s.totalElements, cur = s.page;
+    if (total === 0) { $("pager").innerHTML = ""; return; }
+
+    const from = cur * PAGE_SIZE + 1;
+    const to   = Math.min((cur + 1) * PAGE_SIZE, total);
+
+    let btns = "";
+    if (pages > 1) {
+      const MAX = 7, half = Math.floor(MAX / 2);
+      let a = Math.max(0, cur - half);
+      let b = Math.min(pages - 1, a + MAX - 1);
+      if (b - a < MAX - 1) a = Math.max(0, b - MAX + 1);
+
+      btns += `<button class="pg" onclick="goPage(${cur - 1})" ${cur === 0 ? "disabled" : ""} aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>`;
+      if (a > 0) { btns += `<button class="pg" onclick="goPage(0)">1</button>`; if (a > 1) btns += `<button class="pg" disabled>…</button>`; }
+      for (let i = a; i <= b; i++) btns += `<button class="pg ${i === cur ? "active" : ""}" onclick="goPage(${i})">${i + 1}</button>`;
+      if (b < pages - 1) { if (b < pages - 2) btns += `<button class="pg" disabled>…</button>`; btns += `<button class="pg" onclick="goPage(${pages - 1})">${pages}</button>`; }
+      btns += `<button class="pg" onclick="goPage(${cur + 1})" ${cur >= pages - 1 ? "disabled" : ""} aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>`;
     }
+    $("pager").innerHTML = `<span>Mostrando <strong>${from}–${to}</strong> de <strong>${total}</strong></span><div class="pager-btns">${btns}</div>`;
+  }
 
-    function loadSection(section) {
-      state[section].page = 0;
-      fetchSection(section);
-    }
+  function goPage(page) {
+    const s = state[active];
+    page = Math.max(0, Math.min(page, s.totalPages - 1));
+    if (page === s.page) return;
+    s.page = page;
+    fetchSection(active);
+  }
 
-    // ── colMap y headers: extendidos con las 2 nuevas secciones ──
-    const COL_MAP = {
-      usuarios: 8, empresas: 7, propuestas: 7,
-      postulaciones: 6, generos: 5, tiposDoc: 6,
+  function reload(section) { statsData = null; fetchSection(section); loadStats(); }
+
+  /* ── Filas ── */
+  function actions(editFn, delFn, id) {
+    return `<td class="end">
+      <button class="icon-btn" title="Editar" aria-label="Editar" onclick="${editFn}('${jsArg(id)}')"><i class="bi bi-pencil"></i></button>
+      <button class="icon-btn danger" title="Eliminar" aria-label="Eliminar" onclick="${delFn}('${jsArg(id)}')"><i class="bi bi-trash3"></i></button>
+    </td>`;
+  }
+
+  function rowUsuario(u, id) {
+    return `<tr>
+      <td><div class="cell-main">
+        <div class="avatar">${h(initials(u.nombre, u.apellido))}</div>
+        <div style="min-width:0">
+          <div class="cell-title">${h(`${u.nombre ?? ""} ${u.apellido ?? ""}`.trim())}</div>
+          <div class="cell-sub truncate">${h(u.email)}</div>
+        </div>
+      </div></td>
+      <td class="num">${h(u.documento)}</td>
+      <td class="num">${h(u.edad)}</td>
+      <td>${pillActivo(u.enabled, "Activa", "Inactiva")}</td>
+      ${actions("openEditUsuario", "eliminarUsuario", id)}
+    </tr>`;
+  }
+
+  function rowEmpresa(e, id) {
+    const dir = e.direccion ?? {};
+    return `<tr>
+      <td><div class="cell-main">
+        <div class="avatar square">${h(initials(e.nombreEmpresa))}</div>
+        <div style="min-width:0">
+          <div class="cell-title">${h(e.nombreEmpresa)}</div>
+          <div class="cell-sub truncate">${h(e.correo)}</div>
+        </div>
+      </div></td>
+      <td class="num">${h(e.nit)}</td>
+      <td>${h(dir.ciudad)}${dir.departamento ? `<div class="cell-sub">${h(dir.departamento)}</div>` : ""}</td>
+      <td>${pillActivo(e.enabled, "Activa", "Inactiva")}</td>
+      ${actions("openEditEmpresa", "eliminarEmpresa", id)}
+    </tr>`;
+  }
+
+  function rowPropuesta(p, id) {
+    const empresa = p.empresaNombre ?? p.empresa?.nombreEmpresa ?? null;
+    return `<tr>
+      <td><div style="min-width:0">
+        <div class="cell-title truncate" title="${h(p.titulo, "")}">${h(p.titulo)}</div>
+        <div class="cell-sub">${empresa ? h(empresa) : idChip(id)}</div>
+      </div></td>
+      <td><span class="pill pill-neutral no-dot">${h(p.categoria)}</span></td>
+      <td class="num">${fmtMoney(p.salario)}</td>
+      <td>${pillEstadoPropuesta(p.estado)}</td>
+      ${actions("openEditPropuesta", "eliminarPropuesta", id)}
+    </tr>`;
+  }
+
+  const ESTADOS_POSTULACION = ["Pendiente", "Aprobado", "Rechazado"];
+  function rowPostulacion(p, id) {
+    const nombre = p.usuarioNombre
+      ?? (p.usuario ? `${p.usuario.nombre ?? ""} ${p.usuario.apellido ?? ""}`.trim() : null);
+    const email  = p.usuarioEmail ?? p.usuario?.email;
+    const titulo = p.propuestaTitulo ?? p.propuesta?.titulo;
+    const estado = p.estadoPostulacion ?? "Pendiente";
+    const opts   = ESTADOS_POSTULACION.includes(estado) ? ESTADOS_POSTULACION : [estado, ...ESTADOS_POSTULACION];
+    const color  = { pendiente: "var(--warning)", aprobado: "var(--success)", aprobada: "var(--success)",
+                     rechazado: "var(--danger)", rechazada: "var(--danger)" }[estado.toLowerCase()] ?? "var(--text)";
+    return `<tr>
+      <td><div class="cell-main">
+        <div class="avatar">${h(initials(nombre))}</div>
+        <div style="min-width:0">
+          <div class="cell-title">${h(nombre)}</div>
+          <div class="cell-sub truncate">${h(email)}</div>
+        </div>
+      </div></td>
+      <td class="truncate" title="${h(titulo, "")}">${h(titulo)}</td>
+      <td class="num muted">${fmtDate(p.fechaPostulacion)}</td>
+      <td>
+        <select class="estado-select" style="color:${color}" aria-label="Estado de la postulación"
+                onchange="cambiarEstadoPostulacion('${jsArg(id)}', this)">
+          ${opts.map(o => `<option value="${h(o)}" ${o === estado ? "selected" : ""}>${h(o)}</option>`).join("")}
+        </select>
+      </td>
+      <td class="end">
+        <button class="icon-btn danger" title="Eliminar" aria-label="Eliminar" onclick="eliminarPostulacion('${jsArg(id)}')"><i class="bi bi-trash3"></i></button>
+      </td>
+    </tr>`;
+  }
+
+  function rowGenero(g, id) {
+    return `<tr>
+      <td class="cell-title">${h(g.nombre)}</td>
+      <td class="muted">${h(g.descripcion)}</td>
+      <td>${pillActivo(g.activo)}</td>
+      ${actions("openGeneroModal", "eliminarGenero", id)}
+    </tr>`;
+  }
+
+  function rowTipoDoc(t, id) {
+    return `<tr>
+      <td><span class="pill pill-accent no-dot">${h(t.codigo)}</span></td>
+      <td class="cell-title">${h(t.nombre)}</td>
+      <td class="muted">${h(t.descripcion)}</td>
+      <td>${pillActivo(t.activo)}</td>
+      ${actions("openTipoDocModal", "eliminarTipoDoc", id)}
+    </tr>`;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CRUD Usuarios
+     ══════════════════════════════════════════════════════════ */
+  function openEditUsuario(id) {
+    const u = findById(state.usuarios.cache, id);
+    if (!u) { toast("No se encontró el usuario.", true); return; }
+    $("u_id").value         = id;
+    $("u_nombre").value     = u.nombre    ?? "";
+    $("u_apellido").value   = u.apellido  ?? "";
+    $("u_email").value      = u.email     ?? "";
+    $("u_documento").value  = u.documento ?? "";
+    $("u_edad").value       = u.edad      ?? "";
+    $("u_contrasena").value = "";
+    $("u_enabled").value    = String(u.enabled ?? true);
+    const dir = u.direccion ?? {};
+    $("u_calle").value        = dir.calle        ?? "";
+    $("u_ciudad").value       = dir.ciudad       ?? "";
+    $("u_departamento").value = dir.departamento ?? "";
+    bootstrap.Modal.getOrCreateInstance("#modalUsuario").show();
+  }
+
+  function guardarUsuario(btn) {
+    const id = $("u_id").value;
+    const original = findById(state.usuarios.cache, id);
+    if (!original) { toast("No se encontró el usuario.", true); return; }
+    const payload = {
+      ...original,
+      nombre:     $("u_nombre").value,
+      apellido:   $("u_apellido").value,
+      email:      $("u_email").value,
+      documento:  Number($("u_documento").value),
+      edad:       Number($("u_edad").value),
+      contrasena: $("u_contrasena").value,
+      enabled:    $("u_enabled").value === "true",
+      direccion: {
+        ...(original.direccion ?? {}),
+        calle:        $("u_calle").value,
+        ciudad:       $("u_ciudad").value,
+        departamento: $("u_departamento").value,
+      },
     };
-    const HEADERS = {
-      usuarios:      ["ID","Nombre","Apellido","Email","Documento","Edad","Estado","Acciones"],
-      empresas:      ["ID","Nombre","Correo","NIT","Ciudad","Estado","Acciones"],
-      propuestas:    ["ID","Título","Empresa","Categoría","Salario","Estado","Acciones"],
-      postulaciones: ["ID","Usuario","Email","Propuesta","Fecha","Estado"],
-      generos:       ["ID","Nombre","Descripción","Activo","Acciones"],
-      tiposDoc:      ["ID","Código","Nombre","Descripción","Activo","Acciones"],
+    return withBusy(btn, async () => {
+      try {
+        const res = await fetch(`${API}/usuario/${encodeURIComponent(id)}`, {
+          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+        });
+        if (!res.ok) { toast(await errorText(res), true); return; }
+        bootstrap.Modal.getInstance($("modalUsuario")).hide();
+        toast("Usuario actualizado");
+        reload("usuarios");
+      } catch (e) { toast(e.message, true); }
+    });
+  }
+
+  async function eliminarUsuario(id) {
+    const u = findById(state.usuarios.cache, id);
+    const nombre = u ? `${u.nombre ?? ""} ${u.apellido ?? ""}`.trim() : "este usuario";
+    if (!await confirmar("¿Eliminar usuario?", `Se eliminará a ${nombre}. Esta acción no se puede deshacer.`)) return;
+    await borrar(`${API}/usuario/${encodeURIComponent(id)}`, "Usuario eliminado", "usuarios");
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CRUD Empresas
+     ══════════════════════════════════════════════════════════ */
+  function openEditEmpresa(id) {
+    const e = findById(state.empresas.cache, id);
+    if (!e) { toast("No se encontró la empresa.", true); return; }
+    $("e_id").value            = id;
+    $("e_nombreEmpresa").value = e.nombreEmpresa ?? "";
+    $("e_correo").value        = e.correo        ?? "";
+    $("e_nit").value           = e.nit           ?? "";
+    $("e_contrasena").value    = "";
+    $("e_enabled").value       = String(e.enabled ?? true);
+    const dir = e.direccion ?? {};
+    $("e_calle").value        = dir.calle        ?? "";
+    $("e_ciudad").value       = dir.ciudad       ?? "";
+    $("e_departamento").value = dir.departamento ?? "";
+    bootstrap.Modal.getOrCreateInstance("#modalEmpresa").show();
+  }
+
+  function guardarEmpresa(btn) {
+    const id = $("e_id").value;
+    const original = findById(state.empresas.cache, id);
+    if (!original) { toast("No se encontró la empresa.", true); return; }
+    const payload = {
+      ...original,
+      nombreEmpresa: $("e_nombreEmpresa").value,
+      correo:        $("e_correo").value,
+      nit:           Number($("e_nit").value),
+      contrasena:    $("e_contrasena").value,
+      enabled:       $("e_enabled").value === "true",
+      direccion: {
+        ...(original.direccion ?? {}),
+        calle:        $("e_calle").value,
+        ciudad:       $("e_ciudad").value,
+        departamento: $("e_departamento").value,
+      },
     };
-
-    function renderLoading(section) {
-      const cols  = COL_MAP[section];
-      const thead = getTheadHTML(section);
-      document.getElementById(`tabla${capitalize(section)}`).innerHTML =
-        `${thead}<tbody>${loadingRow(cols)}</tbody>`;
-      document.getElementById(`pag${capitalize(section)}`).innerHTML = "";
-    }
-
-    function renderSection(section) {
-      const s     = state[section];
-      const thead = getTheadHTML(section);
-      const cols  = COL_MAP[section];
-
-      const tbody = s.cache.length
-        ? s.cache.map(item => getRowHTML(section, item)).join("")
-        : emptyRow(cols);
-
-      document.getElementById(`tabla${capitalize(section)}`).innerHTML =
-        `${thead}<tbody>${tbody}</tbody>`;
-    }
-
-    function getTheadHTML(section) {
-      const ths = HEADERS[section].map(h =>
-        `<th${h === "Acciones" ? ' class="text-end"' : ""}>${h}</th>`
-      ).join("");
-      return `<thead><tr>${ths}</tr></thead>`;
-    }
-
-    function getRowHTML(section, item) {
-      const id = getId(item);
-      if (section === "usuarios")      return rowUsuario(item, id);
-      if (section === "empresas")      return rowEmpresa(item, id);
-      if (section === "propuestas")    return rowPropuesta(item, id);
-      if (section === "postulaciones") return rowPostulacion(item, id);
-      if (section === "generos")       return rowGenero(item, id);
-      if (section === "tiposDoc")      return rowTipoDoc(item, id);
-    }
-
-    // ── Rows originales (sin tocar) ──
-    function rowUsuario(u, id) {
-      return `<tr>
-        <td><code style="font-size:.75rem">${id}</code></td>
-        <td>${u.nombre ?? "—"}</td>
-        <td>${u.apellido ?? "—"}</td>
-        <td>${u.email ?? "—"}</td>
-        <td>${u.documento ?? "—"}</td>
-        <td>${u.edad ?? "—"}</td>
-        <td>${badgeEnabled(u.enabled)}</td>
-        <td class="text-end" style="white-space:nowrap">
-          <button class="btn-ghost-ch me-1" onclick="openEditUsuario('${esc(id)}')">Editar</button>
-          <button class="btn-danger-ch"     onclick="eliminarUsuario('${esc(id)}')">Eliminar</button>
-        </td>
-      </tr>`;
-    }
-
-    function rowEmpresa(e, id) {
-      const ciudad = e.direccion?.ciudad ?? "—";
-      return `<tr>
-        <td><code style="font-size:.75rem">${id}</code></td>
-        <td>${e.nombreEmpresa ?? "—"}</td>
-        <td>${e.correo ?? "—"}</td>
-        <td>${e.nit ?? "—"}</td>
-        <td>${ciudad}</td>
-        <td>${badgeEnabled(e.enabled)}</td>
-        <td class="text-end" style="white-space:nowrap">
-          <button class="btn-ghost-ch me-1" onclick="openEditEmpresa('${esc(id)}')">Editar</button>
-          <button class="btn-danger-ch"     onclick="eliminarEmpresa('${esc(id)}')">Eliminar</button>
-        </td>
-      </tr>`;
-    }
-
-    function rowPropuesta(p, id) {
-      const empresa = p.empresaNombre ?? p.empresa?.nombreEmpresa ?? p.empresaId ?? "—";
-      return `<tr>
-        <td><code style="font-size:.75rem">${id}</code></td>
-        <td class="truncate" title="${p.titulo ?? ''}">${p.titulo ?? "—"}</td>
-        <td>${empresa}</td>
-        <td><span class="badge-status badge-neutral">${p.categoria ?? "—"}</span></td>
-        <td>$ ${Number(p.salario ?? 0).toLocaleString("es-CO")}</td>
-        <td><span class="badge-status badge-blue">${p.estado ?? "—"}</span></td>
-        <td class="text-end" style="white-space:nowrap">
-          <button class="btn-ghost-ch me-1" onclick="openEditPropuesta('${esc(id)}')">Editar</button>
-          <button class="btn-danger-ch"     onclick="eliminarPropuesta('${esc(id)}')">Eliminar</button>
-        </td>
-      </tr>`;
-    }
-
-    function rowPostulacion(p, id) {
-      const usuarioNombre = p.usuarioNombre
-        ?? (p.usuario ? `${p.usuario.nombre ?? ""} ${p.usuario.apellido ?? ""}`.trim() : null)
-        ?? p.usuarioId ?? "—";
-      const usuarioEmail = p.usuarioEmail ?? p.usuario?.email ?? "—";
-      const propTitulo   = p.propuestaTitulo ?? p.propuesta?.titulo ?? p.propuestaId ?? "—";
-      const estadoVal    = p.estadoPostulacion ?? "—";
-      const fecha = p.fechaPostulacion
-        ? new Date(p.fechaPostulacion).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })
-        : "—";
-      const estadoClass = {
-        "pendiente":"badge-neutral","aceptada":"badge-enabled",
-        "rechazada":"badge-disabled","en revisión":"badge-blue","en revision":"badge-blue",
-      }[String(estadoVal).toLowerCase()] ?? "badge-neutral";
-
-      return `<tr>
-        <td><code style="font-size:.75rem">${id}</code></td>
-        <td>${usuarioNombre}</td>
-        <td>${usuarioEmail}</td>
-        <td class="truncate" title="${propTitulo}">${propTitulo}</td>
-        <td>${fecha}</td>
-        <td><span class="badge-status ${estadoClass}">${estadoVal}</span></td>
-      </tr>`;
-    }
-
-    // ── Rows nuevos ──
-    function rowGenero(g, id) {
-      return `<tr>
-        <td><code style="font-size:.75rem">${id}</code></td>
-        <td>${g.nombre ?? "—"}</td>
-        <td>${g.descripcion ?? "—"}</td>
-        <td>${badgeEnabled(g.activo)}</td>
-        <td class="text-end" style="white-space:nowrap">
-          <button class="btn-ghost-ch me-1" onclick="openGeneroModal('${esc(id)}')">Editar</button>
-          <button class="btn-danger-ch"     onclick="eliminarGenero('${esc(id)}')">Eliminar</button>
-        </td>
-      </tr>`;
-    }
-
-    function rowTipoDoc(t, id) {
-      return `<tr>
-        <td><code style="font-size:.75rem">${id}</code></td>
-        <td><span class="badge-status badge-blue">${t.codigo ?? "—"}</span></td>
-        <td>${t.nombre ?? "—"}</td>
-        <td>${t.descripcion ?? "—"}</td>
-        <td>${badgeEnabled(t.activo)}</td>
-        <td class="text-end" style="white-space:nowrap">
-          <button class="btn-ghost-ch me-1" onclick="openTipoDocModal('${esc(id)}')">Editar</button>
-          <button class="btn-danger-ch"     onclick="eliminarTipoDoc('${esc(id)}')">Eliminar</button>
-        </td>
-      </tr>`;
-    }
-
-    // ════════════════════════════════════════
-    // CRUD originales (sin cambios)
-    // ════════════════════════════════════════
-    function openEditUsuario(id) {
-      const u = findById(state.usuarios.cache, id);
-      if (!u) { toast("No se encontró el usuario en caché.", true); return; }
-      document.getElementById("u_id").value         = id;
-      document.getElementById("u_nombre").value     = u.nombre    ?? "";
-      document.getElementById("u_apellido").value   = u.apellido  ?? "";
-      document.getElementById("u_email").value      = u.email     ?? "";
-      document.getElementById("u_documento").value  = u.documento ?? "";
-      document.getElementById("u_edad").value       = u.edad      ?? "";
-      document.getElementById("u_contrasena").value = "";
-      document.getElementById("u_enabled").value    = String(u.enabled ?? true);
-      const dir = u.direccion ?? {};
-      document.getElementById("u_calle").value        = dir.calle        ?? "";
-      document.getElementById("u_ciudad").value       = dir.ciudad       ?? "";
-      document.getElementById("u_departamento").value = dir.departamento ?? "";
-      new bootstrap.Modal("#modalUsuario").show();
-    }
-
-    async function guardarUsuario() {
-      const id       = document.getElementById("u_id").value;
-      const original = findById(state.usuarios.cache, id);
-      if (!original) { toast("No se encontró el usuario.", true); return; }
-      const payload = {
-        ...original,
-        nombre:     document.getElementById("u_nombre").value,
-        apellido:   document.getElementById("u_apellido").value,
-        email:      document.getElementById("u_email").value,
-        documento:  Number(document.getElementById("u_documento").value),
-        edad:       Number(document.getElementById("u_edad").value),
-        contrasena: document.getElementById("u_contrasena").value,
-        enabled:    document.getElementById("u_enabled").value === "true",
-        direccion: {
-          ...(original.direccion ?? {}),
-          calle:        document.getElementById("u_calle").value,
-          ciudad:       document.getElementById("u_ciudad").value,
-          departamento: document.getElementById("u_departamento").value,
-        }
-      };
+    return withBusy(btn, async () => {
       try {
-        const res = await fetch(`${API}/usuario/${id}`, {
-          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+        const res = await fetch(`${API}/empresa/${encodeURIComponent(id)}`, {
+          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
         });
-        if (res.ok) {
-          bootstrap.Modal.getInstance(document.getElementById("modalUsuario")).hide();
-          toast("Usuario actualizado ✓");
-          loadSection("usuarios");
-        } else { toast(`Error ${res.status}: ${await res.text()}`, true); }
-      } catch(e) { toast(e.message, true); }
-    }
+        if (!res.ok) { toast(await errorText(res), true); return; }
+        bootstrap.Modal.getInstance($("modalEmpresa")).hide();
+        toast("Empresa actualizada");
+        reload("empresas");
+      } catch (e) { toast(e.message, true); }
+    });
+  }
 
-    async function eliminarUsuario(id) {
-      if (!confirm("¿Eliminar este usuario? Esta acción no se puede deshacer.")) return;
+  async function eliminarEmpresa(id) {
+    const e = findById(state.empresas.cache, id);
+    if (!await confirmar("¿Eliminar empresa?", `Se eliminará ${e?.nombreEmpresa ?? "esta empresa"}. Esta acción no se puede deshacer.`)) return;
+    await borrar(`${API}/empresa/${encodeURIComponent(id)}`, "Empresa eliminada", "empresas");
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CRUD Propuestas
+     ══════════════════════════════════════════════════════════ */
+  function openEditPropuesta(id) {
+    const p = findById(state.propuestas.cache, id);
+    if (!p) { toast("No se encontró la propuesta.", true); return; }
+    $("p_id").value          = id;
+    $("p_titulo").value      = p.titulo      ?? "";
+    $("p_descripcion").value = p.descripcion ?? "";
+    $("p_requisitos").value  = p.requisitos  ?? "";
+    $("p_salario").value     = p.salario     ?? "";
+    $("p_categoria").value   = p.categoria   ?? "";
+
+    // Si el estado guardado no está en la lista, se agrega para no perderlo
+    const sel = $("p_estado");
+    if (p.estado && ![...sel.options].some(o => o.value === p.estado)) sel.add(new Option(p.estado, p.estado));
+    sel.value = p.estado ?? "Activa";
+
+    const empresa = p.empresaNombre ?? p.empresa?.nombreEmpresa;
+    $("p_empresaInfo").textContent = empresa ? `Publicada por ${empresa}` : "";
+    bootstrap.Modal.getOrCreateInstance("#modalPropuesta").show();
+  }
+
+  function guardarPropuesta(btn) {
+    const id = $("p_id").value;
+    const original = findById(state.propuestas.cache, id);
+    if (!original) { toast("No se encontró la propuesta.", true); return; }
+    const payload = {
+      ...original,
+      titulo:      $("p_titulo").value,
+      descripcion: $("p_descripcion").value,
+      requisitos:  $("p_requisitos").value,
+      salario:     Number($("p_salario").value),
+      categoria:   $("p_categoria").value,
+      estado:      $("p_estado").value,
+    };
+    return withBusy(btn, async () => {
       try {
-        const res = await fetch(`${API}/usuario/${id}`, { method: "DELETE" });
-        toast(res.ok ? "Usuario eliminado ✓" : `Error ${res.status}: ${await res.text().catch(()=>"")}`, !res.ok);
-        if (res.ok) loadSection("usuarios");
-      } catch(e) { toast(e.message, true); }
-    }
-
-    function openEditEmpresa(id) {
-      const e = findById(state.empresas.cache, id);
-      if (!e) { toast("No se encontró la empresa en caché.", true); return; }
-      document.getElementById("e_id").value            = id;
-      document.getElementById("e_nombreEmpresa").value = e.nombreEmpresa ?? "";
-      document.getElementById("e_correo").value        = e.correo        ?? "";
-      document.getElementById("e_nit").value           = e.nit           ?? "";
-      document.getElementById("e_contrasena").value    = "";
-      document.getElementById("e_enabled").value       = String(e.enabled ?? true);
-      const dir = e.direccion ?? {};
-      document.getElementById("e_calle").value        = dir.calle        ?? "";
-      document.getElementById("e_ciudad").value       = dir.ciudad       ?? "";
-      document.getElementById("e_departamento").value = dir.departamento ?? "";
-      new bootstrap.Modal("#modalEmpresa").show();
-    }
-
-    async function guardarEmpresa() {
-      const id       = document.getElementById("e_id").value;
-      const original = findById(state.empresas.cache, id);
-      if (!original) { toast("No se encontró la empresa.", true); return; }
-      const payload = {
-        ...original,
-        nombreEmpresa: document.getElementById("e_nombreEmpresa").value,
-        correo:        document.getElementById("e_correo").value,
-        nit:           Number(document.getElementById("e_nit").value),
-        contrasena:    document.getElementById("e_contrasena").value,
-        enabled:       document.getElementById("e_enabled").value === "true",
-        direccion: {
-          ...(original.direccion ?? {}),
-          calle:        document.getElementById("e_calle").value,
-          ciudad:       document.getElementById("e_ciudad").value,
-          departamento: document.getElementById("e_departamento").value,
-        }
-      };
-      try {
-        const res = await fetch(`${API}/empresa/${id}`, {
-          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+        const res = await fetch(`${API}/propuesta/${encodeURIComponent(id)}`, {
+          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
         });
-        if (res.ok) {
-          bootstrap.Modal.getInstance(document.getElementById("modalEmpresa")).hide();
-          toast("Empresa actualizada ✓");
-          loadSection("empresas");
-        } else { toast(`Error ${res.status}: ${await res.text()}`, true); }
-      } catch(e) { toast(e.message, true); }
-    }
+        if (!res.ok) { toast(await errorText(res), true); return; }
+        bootstrap.Modal.getInstance($("modalPropuesta")).hide();
+        toast("Propuesta actualizada");
+        reload("propuestas");
+      } catch (e) { toast(e.message, true); }
+    });
+  }
 
-    async function eliminarEmpresa(id) {
-      if (!confirm("¿Eliminar esta empresa?")) return;
+  async function eliminarPropuesta(id) {
+    const p = findById(state.propuestas.cache, id);
+    if (!await confirmar("¿Eliminar propuesta?", `Se eliminará «${p?.titulo ?? "esta propuesta"}». Esta acción no se puede deshacer.`)) return;
+    await borrar(`${API}/propuesta/${encodeURIComponent(id)}`, "Propuesta eliminada", "propuestas");
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Postulaciones (cambio de estado + eliminar)
+     ══════════════════════════════════════════════════════════ */
+  async function cambiarEstadoPostulacion(id, select) {
+    const p = findById(state.postulaciones.cache, id);
+    const anterior = p?.estadoPostulacion ?? "Pendiente";
+    const nuevo = select.value;
+    select.disabled = true;
+    try {
+      const res = await fetch(`${API}/postulacion/${encodeURIComponent(id)}/estado`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado: nuevo }),
+      });
+      if (!res.ok) { toast(await errorText(res), true); select.value = anterior; return; }
+      if (p) p.estadoPostulacion = nuevo;
+      statsData = null;   // las gráficas se recalculan la próxima vez que se abran
+      toast(`Postulación marcada como ${nuevo.toLowerCase()}`);
+      renderSection();
+    } catch (e) {
+      toast(e.message, true);
+      select.value = anterior;
+    } finally {
+      select.disabled = false;
+    }
+  }
+
+  async function eliminarPostulacion(id) {
+    if (!await confirmar("¿Eliminar postulación?", "El candidato dejará de aparecer en esta propuesta.")) return;
+    await borrar(`${API}/postulacion/${encodeURIComponent(id)}`, "Postulación eliminada", "postulaciones");
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CRUD Géneros
+     ══════════════════════════════════════════════════════════ */
+  function openGeneroModal(id) {
+    const isEdit = !!id;
+    $("modalGeneroTitle").textContent = isEdit ? "Editar género" : "Nuevo género";
+    $("g_id").value = id ?? "";
+    $("g_nombre").value = ""; $("g_descripcion").value = ""; $("g_activo").value = "true";
+    if (isEdit) {
+      const g = findById(state.generos.cache, id);
+      if (!g) { toast("No se encontró el género.", true); return; }
+      $("g_nombre").value      = g.nombre      ?? "";
+      $("g_descripcion").value = g.descripcion ?? "";
+      $("g_activo").value      = String(g.activo ?? true);
+    }
+    bootstrap.Modal.getOrCreateInstance("#modalGenero").show();
+  }
+
+  function guardarGenero(btn) {
+    const nombre = $("g_nombre").value.trim();
+    if (!nombre) { toast("El nombre es obligatorio.", true); $("g_nombre").focus(); return; }
+    const id = $("g_id").value, isEdit = !!id;
+    const payload = {
+      nombre,
+      descripcion: $("g_descripcion").value.trim() || null,
+      activo:      $("g_activo").value === "true",
+    };
+    return withBusy(btn, async () => {
       try {
-        const res = await fetch(`${API}/empresa/${id}`, { method: "DELETE" });
-        toast(res.ok ? "Empresa eliminada ✓" : `Error ${res.status}: ${await res.text().catch(()=>"")}`, !res.ok);
-        if (res.ok) loadSection("empresas");
-      } catch(e) { toast(e.message, true); }
-    }
-
-    function openEditPropuesta(id) {
-      const p = findById(state.propuestas.cache, id);
-      if (!p) { toast("No se encontró la propuesta en caché.", true); return; }
-      document.getElementById("p_id").value          = id;
-      document.getElementById("p_titulo").value      = p.titulo      ?? "";
-      document.getElementById("p_descripcion").value = p.descripcion ?? "";
-      document.getElementById("p_requisitos").value  = p.requisitos  ?? "";
-      document.getElementById("p_salario").value     = p.salario     ?? "";
-      document.getElementById("p_categoria").value   = p.categoria   ?? "";
-      document.getElementById("p_estado").value      = p.estado      ?? "";
-      new bootstrap.Modal("#modalPropuesta").show();
-    }
-
-    async function guardarPropuesta() {
-      const id       = document.getElementById("p_id").value;
-      const original = findById(state.propuestas.cache, id);
-      if (!original) { toast("No se encontró la propuesta.", true); return; }
-      const payload = {
-        ...original,
-        titulo:      document.getElementById("p_titulo").value,
-        descripcion: document.getElementById("p_descripcion").value,
-        requisitos:  document.getElementById("p_requisitos").value,
-        salario:     Number(document.getElementById("p_salario").value),
-        categoria:   document.getElementById("p_categoria").value,
-        estado:      document.getElementById("p_estado").value,
-      };
-      try {
-        const res = await fetch(`${API}/propuesta/${id}`, {
-          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+        const res = await fetch(isEdit ? `${API}/generos/${encodeURIComponent(id)}` : `${API}/generos`, {
+          method: isEdit ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
         });
-        if (res.ok) {
-          bootstrap.Modal.getInstance(document.getElementById("modalPropuesta")).hide();
-          toast("Propuesta actualizada ✓");
-          loadSection("propuestas");
-        } else { toast(`Error ${res.status}: ${await res.text()}`, true); }
-      } catch(e) { toast(e.message, true); }
-    }
+        if (!res.ok) { toast(await errorText(res), true); return; }
+        bootstrap.Modal.getInstance($("modalGenero")).hide();
+        toast(isEdit ? "Género actualizado" : "Género creado");
+        reload("generos");
+      } catch (e) { toast(e.message, true); }
+    });
+  }
 
-    async function eliminarPropuesta(id) {
-      if (!confirm("¿Eliminar esta propuesta?")) return;
+  async function eliminarGenero(id) {
+    const g = findById(state.generos.cache, id);
+    if (!await confirmar("¿Eliminar género?", `Se eliminará «${g?.nombre ?? "este género"}» del catálogo.`)) return;
+    await borrar(`${API}/generos/${encodeURIComponent(id)}`, "Género eliminado", "generos");
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CRUD Tipos de documento
+     ══════════════════════════════════════════════════════════ */
+  function openTipoDocModal(id) {
+    const isEdit = !!id;
+    $("modalTipoDocTitle").textContent = isEdit ? "Editar tipo de documento" : "Nuevo tipo de documento";
+    $("td_id").value = id ?? "";
+    $("td_codigo").value = ""; $("td_nombre").value = ""; $("td_descripcion").value = ""; $("td_activo").value = "true";
+    if (isEdit) {
+      const t = findById(state.tiposDoc.cache, id);
+      if (!t) { toast("No se encontró el tipo de documento.", true); return; }
+      $("td_codigo").value      = t.codigo      ?? "";
+      $("td_nombre").value      = t.nombre      ?? "";
+      $("td_descripcion").value = t.descripcion ?? "";
+      $("td_activo").value      = String(t.activo ?? true);
+    }
+    bootstrap.Modal.getOrCreateInstance("#modalTipoDoc").show();
+  }
+
+  function guardarTipoDoc(btn) {
+    const codigo = $("td_codigo").value.trim();
+    const nombre = $("td_nombre").value.trim();
+    if (!codigo || !nombre) { toast("Código y nombre son obligatorios.", true); return; }
+    const id = $("td_id").value, isEdit = !!id;
+    const payload = {
+      codigo: codigo.toUpperCase(),
+      nombre,
+      descripcion: $("td_descripcion").value.trim() || null,
+      activo:      $("td_activo").value === "true",
+    };
+    return withBusy(btn, async () => {
       try {
-        const res = await fetch(`${API}/propuesta/${id}`, { method: "DELETE" });
-        toast(res.ok ? "Propuesta eliminada ✓" : `Error ${res.status}: ${await res.text().catch(()=>"")}`, !res.ok);
-        if (res.ok) loadSection("propuestas");
-      } catch(e) { toast(e.message, true); }
-    }
-
-    // ════════════════════════════════════════
-    // CRUD Géneros (nuevo)
-    // ════════════════════════════════════════
-    function openGeneroModal(id) {
-      const isEdit = !!id;
-      document.getElementById("modalGeneroTitle").textContent = isEdit ? "Editar Género" : "Nuevo Género";
-      document.getElementById("g_id").value          = id ?? "";
-      document.getElementById("g_descripcion").value = "";
-      document.getElementById("g_activo").value      = "true";
-      document.getElementById("g_nombre").value      = "";
-      if (isEdit) {
-        const g = findById(state.generos.cache, id);
-        if (!g) { toast("No se encontró el género en caché.", true); return; }
-        document.getElementById("g_nombre").value      = g.nombre      ?? "";
-        document.getElementById("g_descripcion").value = g.descripcion ?? "";
-        document.getElementById("g_activo").value      = String(g.activo ?? true);
-      }
-      new bootstrap.Modal("#modalGenero").show();
-    }
-
-    async function guardarGenero() {
-      const nombre = document.getElementById("g_nombre").value.trim();
-      if (!nombre) { toast("El nombre es obligatorio.", true); return; }
-      const id     = document.getElementById("g_id").value;
-      const isEdit = !!id;
-      const payload = {
-        nombre,
-        descripcion: document.getElementById("g_descripcion").value.trim() || null,
-        activo:      document.getElementById("g_activo").value === "true",
-      };
-      try {
-        const res = await fetch(isEdit ? `${API}/generos/${id}` : `${API}/generos`, {
-          method: isEdit ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+        const res = await fetch(isEdit ? `${API}/tipos-documento/${encodeURIComponent(id)}` : `${API}/tipos-documento`, {
+          method: isEdit ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
         });
-        if (res.ok) {
-          bootstrap.Modal.getInstance(document.getElementById("modalGenero")).hide();
-          toast(isEdit ? "Género actualizado ✓" : "Género creado ✓");
-          loadSection("generos");
-        } else { toast(`Error ${res.status}: ${await res.text()}`, true); }
-      } catch(e) { toast(e.message, true); }
+        if (!res.ok) { toast(await errorText(res), true); return; }
+        bootstrap.Modal.getInstance($("modalTipoDoc")).hide();
+        toast(isEdit ? "Tipo de documento actualizado" : "Tipo de documento creado");
+        reload("tiposDoc");
+      } catch (e) { toast(e.message, true); }
+    });
+  }
+
+  async function eliminarTipoDoc(id) {
+    const t = findById(state.tiposDoc.cache, id);
+    if (!await confirmar("¿Eliminar tipo de documento?", `Se eliminará «${t?.nombre ?? "este tipo"}» del catálogo.`)) return;
+    await borrar(`${API}/tipos-documento/${encodeURIComponent(id)}`, "Tipo de documento eliminado", "tiposDoc");
+  }
+
+  /* ── Eliminar genérico ── */
+  async function borrar(url, okMsg, section) {
+    try {
+      const res = await fetch(url, { method: "DELETE" });
+      if (!res.ok) { toast(await errorText(res), true); return; }
+      toast(okMsg);
+      // Si se borró el último elemento de la página, retrocede una
+      const s = state[section];
+      if (s.cache.length === 1 && s.page > 0) s.page--;
+      reload(section);
+    } catch (e) { toast(e.message, true); }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Estadísticas
+     ══════════════════════════════════════════════════════════ */
+  // Resumen ya calculado por el backend (GET /admin/estadisticas); se guarda mientras la pestaña esté abierta
+  let statsData = null;
+
+  async function loadStatsView(force = false) {
+    if (statsData && !force) { renderStats(); return; }
+    const view = $("statsView");
+    view.innerHTML = `
+      <div class="kpis">${'<div class="kpi"><div class="skeleton" style="width:50%"></div><div class="skeleton mt-3" style="width:35%;height:22px"></div></div>'.repeat(4)}</div>
+      <div class="viz-grid">${'<div class="viz-card"><div class="skeleton" style="width:40%"></div><div class="skeleton mt-4" style="height:160px"></div></div>'.repeat(4)}</div>`;
+    try {
+      const res = await fetch(`${API}/estadisticas`);
+      if (res.status === 401 || res.status === 403) { window.location.href = "/admin"; return; }
+      if (!res.ok) throw new Error(await errorText(res));
+      statsData = await res.json();
+      if (active === "estadisticas") renderStats();
+    } catch (e) {
+      toast(`Error cargando estadísticas: ${e.message}`, true);
+      view.innerHTML = `<div class="viz-card"><div class="viz-empty">
+        <i class="bi bi-wifi-off"></i><strong>No se pudieron cargar las estadísticas</strong>
+        <span>Revisa la conexión y pulsa «Refrescar».</span></div></div>`;
     }
+  }
 
-    async function eliminarGenero(id) {
-      if (!confirm("¿Eliminar este género?")) return;
-      try {
-        const res = await fetch(`${API}/generos/${id}`, { method: "DELETE" });
-        toast(res.ok ? "Género eliminado ✓" : `Error ${res.status}: ${await res.text().catch(()=>"")}`, !res.ok);
-        if (res.ok) loadSection("generos");
-      } catch(e) { toast(e.message, true); }
-    }
+  /* ── Cálculos ── */
+  // El backend agrupa por el valor tal cual está guardado ("aprobado", "Aprobado", null…);
+  // aquí se normaliza la etiqueta y se suman los grupos que quedan iguales.
+  function fusionar(items = [], normFn) {
+    const m = new Map();
+    items.forEach(({ label, value }) => { const k = normFn(label); m.set(k, (m.get(k) ?? 0) + value); });
+    return [...m].map(([label, value]) => ({ label, value }));
+  }
+  function topN(items, n, otrosLabel = "Otros") {
+    const sorted = [...items].sort((a, b) => b.value - a.value);
+    if (sorted.length <= n) return sorted;
+    const resto = sorted.slice(n - 1).reduce((s, i) => s + i.value, 0);
+    return [...sorted.slice(0, n - 1), { label: otrosLabel, value: resto }];
+  }
+  const texto = vacio => v => String(v ?? "").trim() || vacio;
+  const pct = (v, total) => total ? Math.round(v / total * 100) : 0;
 
-    // ════════════════════════════════════════
-    // CRUD Tipos Documento (nuevo)
-    // ════════════════════════════════════════
-    function openTipoDocModal(id) {
-      const isEdit = !!id;
-      document.getElementById("modalTipoDocTitle").textContent = isEdit ? "Editar Tipo de Documento" : "Nuevo Tipo de Documento";
-      document.getElementById("td_id").value          = id ?? "";
-      document.getElementById("td_codigo").value      = "";
-      document.getElementById("td_nombre").value      = "";
-      document.getElementById("td_descripcion").value = "";
-      document.getElementById("td_activo").value      = "true";
-      if (isEdit) {
-        const t = findById(state.tiposDoc.cache, id);
-        if (!t) { toast("No se encontró el tipo de documento en caché.", true); return; }
-        document.getElementById("td_codigo").value      = t.codigo      ?? "";
-        document.getElementById("td_nombre").value      = t.nombre      ?? "";
-        document.getElementById("td_descripcion").value = t.descripcion ?? "";
-        document.getElementById("td_activo").value      = String(t.activo ?? true);
-      }
-      new bootstrap.Modal("#modalTipoDoc").show();
-    }
+  function normEstadoPost(s) {
+    const l = String(s ?? "").trim().toLowerCase();
+    if (!l || l === "pendiente") return "Pendiente";
+    if (l.startsWith("aprob") || l.startsWith("acept")) return "Aprobado";
+    if (l.startsWith("rechaz")) return "Rechazado";
+    return capitalize(l);
+  }
+  function normEstadoProp(s) {
+    const l = String(s ?? "").trim().toLowerCase();
+    if (!l) return "Sin estado";
+    return capitalize(l);
+  }
 
-    async function guardarTipoDoc() {
-      const codigo = document.getElementById("td_codigo").value.trim();
-      const nombre = document.getElementById("td_nombre").value.trim();
-      if (!codigo || !nombre) { toast("Código y nombre son obligatorios.", true); return; }
-      const id     = document.getElementById("td_id").value;
-      const isEdit = !!id;
-      const payload = {
-        codigo: codigo.toUpperCase(),
-        nombre,
-        descripcion: document.getElementById("td_descripcion").value.trim() || null,
-        activo:      document.getElementById("td_activo").value === "true",
-      };
-      try {
-        const res = await fetch(isEdit ? `${API}/tipos-documento/${id}` : `${API}/tipos-documento`, {
-          method: isEdit ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (res.ok) {
-          bootstrap.Modal.getInstance(document.getElementById("modalTipoDoc")).hide();
-          toast(isEdit ? "Tipo de documento actualizado ✓" : "Tipo de documento creado ✓");
-          loadSection("tiposDoc");
-        } else { toast(`Error ${res.status}: ${await res.text()}`, true); }
-      } catch(e) { toast(e.message, true); }
-    }
+  // Estados: colores de estado reservados + icono + texto (nunca sólo color)
+  const STATUS_POST = {
+    Pendiente: { color: "var(--st-warn)",    icon: "bi-hourglass-split" },
+    Aprobado:  { color: "var(--st-good)",    icon: "bi-check-circle-fill" },
+    Rechazado: { color: "var(--st-crit)",    icon: "bi-x-circle-fill" },
+  };
+  const STATUS_PROP = {
+    Activa:   { color: "var(--st-good)",    icon: "bi-broadcast" },
+    Borrador: { color: "var(--st-neutral)", icon: "bi-pencil-square" },
+    Cerrada:  { color: "var(--st-crit)",    icon: "bi-lock-fill" },
+  };
+  function conEstados(items, config) {
+    const orden = Object.keys(config);
+    return [...items]
+      .sort((a, b) => (orden.indexOf(a.label) + 1 || 99) - (orden.indexOf(b.label) + 1 || 99))
+      .map(i => ({ ...i, ...(config[i.label] ?? { color: "var(--st-neutral)", icon: "bi-question-circle" }) }));
+  }
 
-    async function eliminarTipoDoc(id) {
-      if (!confirm("¿Eliminar este tipo de documento?")) return;
-      try {
-        const res = await fetch(`${API}/tipos-documento/${id}`, { method: "DELETE" });
-        toast(res.ok ? "Tipo de documento eliminado ✓" : `Error ${res.status}: ${await res.text().catch(()=>"")}`, !res.ok);
-        if (res.ok) loadSection("tiposDoc");
-      } catch(e) { toast(e.message, true); }
-    }
+  /* ── Formatos ── */
+  function fmtCompacto(n) {
+    if (n >= 1e6) return (n / 1e6).toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " M";
+    if (n >= 1e3) return (n / 1e3).toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " mil";
+    return n.toLocaleString("es-CO");
+  }
+  function maxRedondo(v) {
+    if (v <= 2) return 2;
+    const exp = 10 ** Math.floor(Math.log10(v));
+    const f = v / exp;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * exp;
+  }
 
-    // ── Boot (igual al original) ──
-    fetchSection("usuarios");
+  /* ── Componentes de gráfica ── */
+  const VACIO = `<div class="viz-empty"><i class="bi bi-bar-chart"></i>Sin datos todavía</div>`;
 
-  </script>
+  function hbars(items, unidad) {
+    const total = items.reduce((s, i) => s + i.value, 0);
+    if (!total) return VACIO;
+    const max = Math.max(...items.map(i => i.value));
+    return `<div class="hbars">${items.map(i => `
+      <div class="hbar-row" data-tip="${h(i.label)}: ${i.value} ${unidad} (${pct(i.value, total)}%)">
+        <span class="hbar-label">${h(i.label)}</span>
+        <span class="hbar-track"><span class="hbar-fill" style="width:${i.value / max * 100}%"></span></span>
+        <span class="hbar-value">${i.value.toLocaleString("es-CO")}</span>
+      </div>`).join("")}</div>`;
+  }
+
+  // Columnas: etiqueta de valor sólo en la última columna y en la más alta
+  function columns(items, unidad) {
+    const total = items.reduce((s, i) => s + i.value, 0);
+    if (!total) return VACIO;
+    const maxVal = Math.max(...items.map(i => i.value));
+    const max    = maxRedondo(maxVal);
+    const ticks  = [0, max / 2, max];
+    const iMax   = items.findIndex(i => i.value === maxVal);
+    return `<div class="cols">
+      <div class="cols-plot">
+        ${ticks.map(t => `<div class="grid-line ${t === 0 ? "base" : ""}" style="bottom:${t / max * 100}%"><span>${fmtCompacto(t)}</span></div>`).join("")}
+        <div class="cols-bars">${items.map((i, idx) => {
+          const alto = i.value / max * 100;
+          const etiqueta = (idx === iMax || idx === items.length - 1) && i.value > 0;
+          return `<div class="col-slot" data-tip="${h(i.label)}: ${i.value} ${unidad}">
+            <div class="col-bar" style="height:${alto}%"></div>
+            ${etiqueta ? `<span class="col-val" style="bottom:calc(${alto}% + 4px)">${i.value.toLocaleString("es-CO")}</span>` : ""}
+          </div>`;
+        }).join("")}</div>
+      </div>
+      <div class="cols-x">${items.map(i => `<span>${h(i.label)}</span>`).join("")}</div>
+    </div>`;
+  }
+
+  function stackedBar(items, unidad) {
+    const total = items.reduce((s, i) => s + i.value, 0);
+    if (!total) return VACIO;
+    return `
+      <div class="stack" role="img" aria-label="${items.map(i => `${h(i.label)} ${pct(i.value, total)}%`).join(", ")}">
+        ${items.filter(i => i.value > 0).map(i =>
+          `<span class="seg" style="flex:${i.value};background:${i.color}" data-tip="${h(i.label)}: ${i.value} ${unidad} (${pct(i.value, total)}%)"></span>`).join("")}
+      </div>
+      <ul class="legend">${items.map(i => `
+        <li data-tip="${h(i.label)}: ${i.value} ${unidad} (${pct(i.value, total)}%)">
+          <i class="bi ${i.icon}" style="color:${i.color}"></i>
+          <span>${h(i.label)}</span>
+          <span class="lg-val">${i.value.toLocaleString("es-CO")}</span>
+          <span class="lg-pct">${pct(i.value, total)}%</span>
+        </li>`).join("")}</ul>`;
+  }
+
+  function tablaDatos(items, colLabel, colValor) {
+    const total = items.reduce((s, i) => s + i.value, 0);
+    if (!total) return "";
+    return `<details class="viz-table"><summary>Ver datos</summary>
+      <table><thead><tr><th>${colLabel}</th><th class="n">${colValor}</th><th class="n">%</th></tr></thead>
+      <tbody>${items.map(i => `<tr><td>${h(i.label)}</td><td class="n">${i.value.toLocaleString("es-CO")}</td><td class="n">${pct(i.value, total)}%</td></tr>`).join("")}</tbody>
+      </table></details>`;
+  }
+
+  function vizCard({ title, sub, body, tabla = "", wide = false }) {
+    return `<article class="viz-card ${wide ? "wide" : ""}">
+      <h3>${title}</h3><p class="viz-sub">${sub}</p>
+      <div class="viz-body">${body}</div>${tabla}
+    </article>`;
+  }
+
+  function kpi(label, value, sub) {
+    return `<div class="kpi"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub}</div></div>`;
+  }
+
+  /* ── Render de la vista ── */
+  function renderStats() {
+    const { totales: T, usuarios, empresas: emp, propuestas, postulaciones } = statsData;
+
+    // Estados
+    const estPost = conEstados(fusionar(postulaciones.porEstado, normEstadoPost), STATUS_POST);
+    const estProp = conEstados(fusionar(propuestas.porEstado,    normEstadoProp), STATUS_PROP);
+    const nPost   = k => estPost.find(i => i.label === k)?.value ?? 0;
+    const nProp   = k => estProp.find(i => i.label === k)?.value ?? 0;
+
+    // Postulaciones de los últimos 6 meses (el backend ya incluye los meses en 0)
+    const meses = postulaciones.porMes.map((x, i) => {
+      const d   = new Date(x.anio, x.mes - 1, 1);
+      const mes = capitalize(d.toLocaleDateString("es-CO", { month: "short" }).replace(".", ""));
+      return { label: mes + (x.mes === 1 || i === 0 ? ` ${String(x.anio).slice(2)}` : ""), value: x.value };
+    });
+
+    // Rangos (ya vienen contados y ordenados desde el backend)
+    const rangosSalario = propuestas.salarioRangos;
+    const edades        = usuarios.porEdad;
+
+    // Categorías, empresas, género y ciudad
+    const categorias = topN(fusionar(propuestas.porCategoria, texto("Sin categoría")),   6, "Otras");
+    const empresas   = topN(fusionar(propuestas.porEmpresa,   texto("Sin nombre")),      5, "Otras empresas");
+    const generos    = topN(fusionar(usuarios.porGenero,      texto("Sin especificar")), 5, "Otros");
+    const ciudades   = topN(fusionar(emp.porCiudad,           texto("Sin ciudad")),      5, "Otras ciudades");
+
+    // KPIs
+    const revisadas  = nPost("Aprobado") + nPost("Rechazado");
+    const conSalario = propuestas.conSalario;
+    const salProm    = propuestas.salarioPromedio;
+    const porOferta  = T.propuestas ? T.postulaciones / T.propuestas : 0;
+
+    $("statsView").innerHTML = `
+      <div class="kpis">
+        ${kpi("Tasa de aprobación", revisadas ? `${pct(nPost("Aprobado"), revisadas)}%` : "—",
+              revisadas ? `${nPost("Aprobado")} aprobadas de ${revisadas} revisadas` : "Aún no hay postulaciones revisadas")}
+        ${kpi("Salario promedio", conSalario ? `$ ${fmtCompacto(Math.round(salProm))}` : "—",
+              `en ${conSalario} ${conSalario === 1 ? "oferta" : "ofertas"} con salario`)}
+        ${kpi("Postulaciones por oferta", porOferta.toLocaleString("es-CO", { maximumFractionDigits: 1 }),
+              "promedio de candidatos por propuesta")}
+        ${kpi("Ofertas activas", nProp("Activa").toLocaleString("es-CO"),
+              `de ${T.propuestas} propuestas publicadas`)}
+      </div>
+
+      <div class="viz-grid">
+        ${vizCard({ wide: true, title: "Postulaciones por mes", sub: "Últimos 6 meses",
+                    body: columns(meses, "postulaciones"), tabla: tablaDatos(meses, "Mes", "Postulaciones") })}
+        ${vizCard({ title: "Estado de las postulaciones", sub: `${T.postulaciones} postulaciones en total`,
+                    body: stackedBar(estPost, "postulaciones"), tabla: tablaDatos(estPost, "Estado", "Postulaciones") })}
+        ${vizCard({ title: "Estado de las propuestas", sub: `${T.propuestas} propuestas en total`,
+                    body: stackedBar(estProp, "propuestas"), tabla: tablaDatos(estProp, "Estado", "Propuestas") })}
+        ${vizCard({ title: "Propuestas por categoría", sub: "Áreas con más ofertas",
+                    body: hbars(categorias, "propuestas"), tabla: tablaDatos(categorias, "Categoría", "Propuestas") })}
+        ${vizCard({ title: "Rango salarial de las ofertas", sub: "Salario mensual en pesos (COP)",
+                    body: columns(rangosSalario, "ofertas"), tabla: tablaDatos(rangosSalario, "Rango", "Ofertas") })}
+        ${vizCard({ title: "Empresas con más propuestas", sub: "Top 5 por número de ofertas publicadas",
+                    body: hbars(empresas, "propuestas"), tabla: tablaDatos(empresas, "Empresa", "Propuestas") })}
+        ${vizCard({ title: "Usuarios por rango de edad", sub: `${T.usuarios} usuarios registrados`,
+                    body: columns(edades, "usuarios"), tabla: tablaDatos(edades, "Edad", "Usuarios") })}
+        ${vizCard({ title: "Usuarios por género", sub: "Según lo indicado en el registro",
+                    body: hbars(generos, "usuarios"), tabla: tablaDatos(generos, "Género", "Usuarios") })}
+        ${vizCard({ title: "Empresas por ciudad", sub: `${T.empresas} empresas registradas`,
+                    body: hbars(ciudades, "empresas"), tabla: tablaDatos(ciudades, "Ciudad", "Empresas") })}
+      </div>`;
+  }
+
+  /* ── Tooltip compartido por todas las gráficas ── */
+  const vizTip = document.createElement("div");
+  vizTip.className = "viz-tip";
+  vizTip.hidden = true;
+  document.body.appendChild(vizTip);
+
+  $("statsView").addEventListener("mouseover", e => {
+    const t = e.target.closest("[data-tip]");
+    if (!t) { vizTip.hidden = true; return; }
+    vizTip.textContent = t.dataset.tip;
+    vizTip.hidden = false;
+  });
+  $("statsView").addEventListener("mousemove", e => {
+    if (vizTip.hidden) return;
+    const pad = 14, r = vizTip.getBoundingClientRect();
+    let x = e.clientX + pad, y = e.clientY - r.height - pad;
+    if (x + r.width > window.innerWidth - 8) x = e.clientX - r.width - pad;
+    if (y < 8) y = e.clientY + pad;
+    vizTip.style.left = x + "px";
+    vizTip.style.top  = y + "px";
+  });
+  $("statsView").addEventListener("mouseleave", () => { vizTip.hidden = true; });
+
+  /* ── Sesión ── */
+  async function cerrarSesion() {
+    try { await fetch(`${API}/logout`, { method: "POST" }); } catch (e) {}
+    window.location.href = "/admin";
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Arranque
+     ══════════════════════════════════════════════════════════ */
+  document.querySelectorAll("[data-section]").forEach(el =>
+    el.addEventListener("click", () => setSection(el.dataset.section)));
+
+  let inicial = "usuarios";
+  try {
+    const saved = localStorage.getItem("chambing-admin-section");
+    if (saved && (SECTIONS[saved] || saved === "estadisticas")) inicial = saved;
+  } catch (e) {}
+
+  setSection(inicial);
+  loadStats();
+</script>
 </body>
 </html>

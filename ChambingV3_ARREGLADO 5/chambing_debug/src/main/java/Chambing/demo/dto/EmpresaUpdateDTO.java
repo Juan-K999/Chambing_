@@ -1,17 +1,37 @@
 package Chambing.demo.dto;
 
+import Chambing.demo.Model.Direccion;
+
 public class EmpresaUpdateDTO {
 
-    private Integer nit;
+    private Long nit;
     private String nombreEmpresa;
     private String correo;
     private String contrasena;
+    private Boolean enabled;      // null = no cambiar
+    private Direccion direccion;  // null = no cambiar
 
-    public Integer getNit() {
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
+
+    public Long getNit() {
         return nit;
     }
 
-    public void setNit(Integer nit) {
+    public void setNit(Long nit) {
         this.nit = nit;
     }
 

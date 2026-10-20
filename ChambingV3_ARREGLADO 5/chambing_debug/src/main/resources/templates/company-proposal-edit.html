@@ -83,8 +83,12 @@
                                                 <input type="text" class="form-control" id="inputTitulo" required>
                                             </div>
                                             <div class="form-group col-md-4">
-                                                <label>Salario (Mensual)</label>
-                                                <input type="number" class="form-control" id="inputSalario" required>
+                                                <label for="inputSalario">Salario (Mensual)</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span class="input-group-text">$</span></div>
+                                                    <input type="text" inputmode="numeric" autocomplete="off" class="form-control"
+                                                           id="inputSalario" placeholder="Ej: 3.500.000" maxlength="15" required>
+                                                </div>
                                             </div>
                                         </div>
                                         <hr>
@@ -141,6 +145,28 @@
     let empresaActual = null;
     const propuestaId = new URLSearchParams(window.location.search).get('id');
 
+    // ─── Salario: separador de miles automático (3500000 → 3.500.000) ───────
+    const inputSalario   = document.getElementById('inputSalario');
+    const soloDigitos    = s => s.replace(/\D/g, '');
+    const formatearMiles = digitos => digitos.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    inputSalario.addEventListener('input', () => {
+        // Conserva la posición del cursor contando los dígitos que hay antes de él
+        const cursor       = inputSalario.selectionStart;
+        const digitosAntes = soloDigitos(inputSalario.value.slice(0, cursor)).length;
+        const digitos      = soloDigitos(inputSalario.value).replace(/^0+(?=\d)/, '');
+        inputSalario.value = formatearMiles(digitos);
+
+        let pos = 0, vistos = 0;
+        while (pos < inputSalario.value.length && vistos < digitosAntes) {
+            if (/\d/.test(inputSalario.value[pos])) vistos++;
+            pos++;
+        }
+        inputSalario.setSelectionRange(pos, pos);
+    });
+
+    const leerSalario = () => Number(soloDigitos(inputSalario.value)) || 0;
+
     async function init() {
         try {
             const res = await fetch('/empresa/me');
@@ -178,7 +204,8 @@
             }
 
             document.getElementById('inputTitulo').value      = p.titulo || '';
-            document.getElementById('inputSalario').value     = p.salario || '';
+            // El salario llega como Double (ej. 3500000.0): se redondea y se muestra con puntos
+            inputSalario.value = p.salario ? formatearMiles(String(Math.round(p.salario))) : '';
             document.getElementById('inputDescripcion').value = p.descripcion || '';
             document.getElementById('inputRequisitos').value  = p.requisitos || '';
 
@@ -196,7 +223,7 @@
 
         const data = {
             titulo:      document.getElementById('inputTitulo').value.trim(),
-            salario:     parseFloat(document.getElementById('inputSalario').value) || 0,
+            salario:     leerSalario(),
             descripcion: document.getElementById('inputDescripcion').value.trim(),
             requisitos:  document.getElementById('inputRequisitos').value.trim(),
             categoria:   document.getElementById('selectCategoria').value,

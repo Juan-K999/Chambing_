@@ -16,6 +16,31 @@
     .error-msg  { background:#fee2e2; color:#b91c1c; }
     .success-msg{ background:#dcfce7; color:#166534; }
 
+    /* Logo "EMPLEO CARTAGENA" como botón para volver al index */
+    .logo-home {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 16px;
+      padding: 16px 12px;
+      transition: background .2s ease, transform .2s ease;
+    }
+    .logo-home:hover, .logo-home:focus-visible {
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,.1);
+      transform: translateY(-2px);
+    }
+    .logo-home:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .logo-home-hint {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .75;
+      transition: opacity .2s ease;
+    }
+    .logo-home:hover .logo-home-hint { opacity: 1; }
+
     /* Bootstrap fija un height pequeño para .form-control y login.css usa padding 14px:
        en un <select> eso aplasta el contenido y el valor seleccionado no se ve.
        Forzamos height auto y line-height coherente sólo para los <select>. */
@@ -36,10 +61,11 @@
 
     <div class="login-info">
       <div class="info-content">
-        <div class="logo-section">
+        <a href="/" class="logo-section logo-home" title="Volver al inicio">
           <img th:src="@{/images/logo.png}" alt="Logo" class="login-logo">
           <h1>EMPLEO CARTAGENA</h1>
-        </div>
+          <span class="logo-home-hint"><i class="fas fa-arrow-left"></i> Volver al inicio</span>
+        </a>
         <h2>Únete a Nosotros</h2>
         <p>Encuentra oportunidades laborales en Cartagena</p>
       </div>
@@ -238,6 +264,18 @@ function hideMsg() {
   document.getElementById('msgBox').style.display = 'none';
 }
 
+// El backend responde texto plano con validaciones propias ("El correo ya está registrado")
+// o el JSON genérico de Spring cuando el formulario trae un valor que no puede convertir.
+async function mensajeError(res) {
+  const texto = await res.text().catch(() => '');
+  if (!texto.trim().startsWith('{')) return texto || 'No se pudo completar el registro.';
+  try {
+    const json = JSON.parse(texto);
+    if (json.message) return json.message;
+  } catch (e) {}
+  return 'Revisa los datos del formulario: algún valor no es válido.';
+}
+
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   hideMsg();
@@ -305,8 +343,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
       showMsg('¡Registro exitoso! Redirigiendo al login...', 'ok');
       setTimeout(() => window.location.href = '/login', 1500);
     } else {
-      const err = await res.text();
-      showMsg('Error: ' + err, 'error');
+      showMsg(await mensajeError(res), 'error');
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
     }

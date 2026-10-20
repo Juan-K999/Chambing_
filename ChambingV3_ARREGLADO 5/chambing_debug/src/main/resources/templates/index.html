@@ -1,46 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>INICIO</title>
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
-  <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-  <link rel="stylesheet" th:href="@{/css/responsive.css}">
-  
-
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-
   <title>EMPLEO CARTAGENA</title>
 
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+  <link rel="stylesheet" th:href="@{/css/responsive.css}">
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
-
-  <!-- bootstrap core css -->
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-
-  <!-- fonts style -->
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet">
-  <!-- Custom styles for this template -->
-  <link href="css/style.css" rel="stylesheet" />
-  <!-- responsive style -->
-  <link href="css/responsive.css" rel="stylesheet" />
 </head>
 
-<body>
+<body class="home">
 
   <div class="hero_area">
     <!-- header section strats -->
     <header class="header_section">
       <div class="container">
         <nav class="navbar navbar-expand-lg custom_nav-container ">
-          <a class="navbar-brand" href="/index">
+          <a class="navbar-brand" href="/">
             <img src="images/logo.png" alt="">
             <span>
               EMPLEO CARTAGENA
@@ -56,7 +36,7 @@
             <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
               <ul class="navbar-nav  ">
                 <li class="nav-item active">
-                  <a class="nav-link" href="/index">Home <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="/about"> About</a>
@@ -147,26 +127,27 @@
               </h2>
               <img src="images/plug.png" alt="">
             </div>
+            <p class="lead-text">
+              Conectamos el talento de Cartagena con las empresas que lo necesitan.
+            </p>
             <p>
-              nos dedicamos a simplificar y mejorar el proceso de búsqueda de empleo para profesionales en todo el mundo. Nuestra misión es conectar a candidatos talentosos con oportunidades laborales emocionantes y proporcionarles las herramientas y recursos necesarios para alcanzar el éxito en sus carreras.
-
-              Fundada en [año de fundación], nuestra plataforma ha crecido hasta convertirse en un destino confiable para aquellos que buscan avanzar en sus trayectorias profesionales. Con años de experiencia en el campo de recursos humanos y desarrollo de carrera, nuestro equipo está comprometido a ofrecer soluciones innovadoras y servicios de alta calidad que satisfagan las necesidades únicas de nuestros usuarios.
-
-              En [Nombre de la Página/Web], creemos en la importancia del acceso equitativo al empleo y en la diversidad como un motor clave para el crecimiento y la innovación en el lugar de trabajo. Nos esforzamos por fomentar un entorno inclusivo donde todas las personas tengan la oportunidad de alcanzar su máximo potencial, independientemente de su origen, género, orientación sexual o identidad de género.
-
-             Nuestra plataforma ofrece una amplia gama de recursos, que incluyen listados de empleo actualizados, consejos de búsqueda de trabajo, orientación profesional, herramientas de desarrollo profesional y más. Trabajamos en estrecha colaboración con empresas líderes y reclutadores para garantizar que nuestros usuarios tengan acceso a las mejores oportunidades laborales disponibles.
-            <a href="">
-              Read More
-            </a>
+              Nuestra misión es simplificar la búsqueda de empleo: reunimos en un solo lugar
+              vacantes actualizadas, empresas verificadas y un proceso de postulación claro.
+            </p>
+            <p>
+              Creemos en el acceso equitativo al trabajo. Por eso construimos un espacio inclusivo
+              donde cada persona pueda encontrar una oportunidad a la altura de su potencial.
+            </p>
+            <a href="/about">Conoce más</a>
           </div>
         </div>
         <div class="col-md-6">
           <div class="img_container">
             <div class="img-box b1">
-              <img src="images/sonriendo1.jpg" alt="" />
+              <img src="images/sonriendo1.jpg" alt="Profesional sonriendo en su lugar de trabajo" />
             </div>
             <div class="img-box b2">
-              <img src="images/about-img2.jpg" alt="" />
+              <img src="images/about-img2.jpg" alt="Equipo de trabajo" />
             </div>
           </div>
 
@@ -192,35 +173,37 @@
         <img src="images/plug.png" alt="">
       </div>
       <div class="row">
-        <div class="col-md-6">
-          <div class="box">
+        <div class="col-md-6 d-flex">
+          <article class="box">
             <div class="img-box">
-              <img src="images/trabajador1.jpg" alt="">
+              <img src="images/trabajador1.jpg" alt="Persona trabajando en su escritorio">
             </div>
             <div class="detail-box">
-              <h5>
-                ESTRATREGIAS EFECTIVAS PARA ENCONTRAR EMPLEO
-              </h5>
+              <span class="tag">Consejos</span>
+              <h5>Estrategias efectivas para encontrar empleo</h5>
               <p>
-                En el mundo laboral actual, la búsqueda de empleo puede ser un desafío. Con una competencia feroz y constantes cambios en el mercado, encontrar la oportunidad adecuada puede parecer una tarea desalentadora. Sin embargo, con las estrategias correctas y una mentalidad proactiva, puedes aumentar significativamente tus posibilidades de éxito. En este artículo, exploraremos cinco estrategias efectivas que te ayudarán a destacarte y asegurar ese empleo deseado, incluso en un mercado laboral competitivo. ¡Sigue leyendo para descubrir cómo puedes dar un impulso a tu búsqueda de empleo!
+                El mercado laboral es competitivo y cambia rápido. Con un plan claro y una
+                actitud proactiva puedes destacarte y conseguir el empleo que buscas.
               </p>
+              <a href="/blog" class="read-more">Leer artículo →</a>
             </div>
-          </div>
+          </article>
         </div>
-        <div class="col-md-6">
-          <div class="box">
+        <div class="col-md-6 d-flex">
+          <article class="box">
             <div class="img-box">
-              <img src="images/blog2.jpg" alt="">
+              <img src="images/blog2.jpg" alt="Persona revisando ofertas de empleo">
             </div>
             <div class="detail-box">
-              <h5>
-                MANTEN UNA ACTITUD PERSEVERANTE Y POSITIVA
-              </h5>
+              <span class="tag">Motivación</span>
+              <h5>Mantén una actitud perseverante y positiva</h5>
               <p>
-                La búsqueda de empleo puede ser desafiante y, a veces, desalentadora. Sin embargo, es importante mantener una actitud positiva y perseverar a pesar de los obstáculos. Utiliza el tiempo entre aplicaciones para mejorar tus habilidades, ampliar tu red de contactos y trabajar en tu desarrollo profesional. Recuerda que cada rechazo es una oportunidad para aprender y crecer. Mantén el enfoque en tus metas y sigue adelante con determinación.
+                Cada rechazo es una oportunidad para aprender. Usa el tiempo entre postulaciones
+                para mejorar tus habilidades y ampliar tu red de contactos.
               </p>
+              <a href="/blog" class="read-more">Leer artículo →</a>
             </div>
-          </div>
+          </article>
         </div>
       </div>
     </div>
@@ -368,9 +351,25 @@
   <!-- footer section -->
 
 
-  <script src="js/jquery-3.4.1.min.js"></script>
-  <script src="js/bootstrap.js"></script>
-<script src="/js/propuestas.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Barra fija: reserva su altura arriba y agrega sombra al hacer scroll
+    (function () {
+      const header = document.querySelector('.home .header_section');
+      const menu   = document.getElementById('navbarSupportedContent');
+      const setHeight = () => {
+        if (menu.classList.contains('show')) return; // no medir con el menú móvil abierto
+        document.body.style.setProperty('--nav-h', header.offsetHeight + 'px');
+      };
+      const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', setHeight);
+      window.addEventListener('load', setHeight);
+      setHeight();
+      onScroll();
+    })();
+  </script>
 
 </body>
 
