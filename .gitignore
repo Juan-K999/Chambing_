@@ -12,3 +12,9 @@ target/
 *.log
 .DS_Store
 Thumbs.db
+
+# Archivo de credenciales (nombre alternativo)
+credeciales.txt
+
+# App Flutter (va en otro repositorio)
+Chambing-Flutter/

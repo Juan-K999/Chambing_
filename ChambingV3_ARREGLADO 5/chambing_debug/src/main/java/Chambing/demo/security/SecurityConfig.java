@@ -23,7 +23,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,6 +81,37 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * CORS para la app Flutter web (carpeta Chambing-Flutter).
+     *
+     * Conexion: la app Flutter corre en el navegador en http://localhost: por que3 al momento no tenemos
+     * servidor y llama a esta API en http://localhost:9999 con
+     * "Authorization: Bearer <jwt>" (POST /api/auth/login, /usuario/**, /empresa/**).
+     * Al ser otro origen, el navegador primero manda un OPTIONS (preflight); sin
+     * esta configuracion Spring lo rechazaba con 403 "Invalid CORS request" y la
+     * app mostraba "ClientException: Failed to fetch".
+     *
+     * - Solo se aceptan origenes localhost / 127.0.0.1 (cualquier puerto, porque
+     *   flutter run cambia el puerto en cada ejecucion).
+     * - allowCredentials=false: la app usa el header Bearer, no cookies.
+     * - Las vistas Thymeleaf no se afectan (son del mismo origen).
+     * - Si la app se publica en otro dominio, agregarlo en allowedOriginPatterns.
+     * - Android / Windows (escritorio) no necesitan CORS; solo el navegador.
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        config.setAllowCredentials(false);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
@@ -142,6 +177,9 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
+
+            // CORS para la app Flutter web: usa el bean corsConfigurationSource().
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
             // OAuth2 necesita sesion durante el handshake (state + AuthorizationRequest
             // viven en HttpSession entre /oauth2/authorization/google y el callback).
